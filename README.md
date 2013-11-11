@@ -3,7 +3,7 @@ MRC - Query MongoDB in REST
 
 Download
 ------------------------------
-Last release in [zip format](http://padewitte.github.io/mrc/release/mrc-0.0.3.zip) or as a [tarball](http://padewitte.github.io/mrc/release/mrc-0.0.3.tar.gz)
+Download last release as a [zip file](http://padewitte.github.io/mrc/release/mrc-0.0.3.zip) or as download it as a [tarball](http://padewitte.github.io/mrc/release/mrc-0.0.3.tar.gz).
 
 Quick start
 -----------------------------
