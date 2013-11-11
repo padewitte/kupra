@@ -1,4 +1,4 @@
-MRC - Query MongoDB in REST
+MRC - MongoDB REST Server
 ==============================
 
 Download
