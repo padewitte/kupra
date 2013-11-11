@@ -1,0 +1,3 @@
+MongoDB already provide a [simple REST interface](http://docs.mongodb.org/ecosystem/tools/http-interfaces/#simple-rest-interface|docs.mongodb.org).
+This interface could be quite sufficient for queries but do not provide any save or update operations. After testing all solutions listed by MongoDB website, I did not find a open source solution available to expose all simple MongoDB operations in REST. 
+After a quick read of Camel MongoDB documentation idea of Mongo Rest Camel was born.
