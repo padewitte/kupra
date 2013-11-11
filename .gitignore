@@ -1,2 +1,5 @@
 target
-test-output
+test-output 
+.classpath
+.project
+dependency-reduced-pom.xml
