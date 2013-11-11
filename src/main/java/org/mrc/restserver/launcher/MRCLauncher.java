@@ -31,6 +31,11 @@ import org.mrc.restserver.MRCRouteBuilder;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
+/**
+ * Launcher class.
+ * Use this one to launch MRC in your unit tests.
+ * @author Pierre-Alban DEWITTE
+ */
 public class MRCLauncher {
 	
 	private MRCLaunchConfig serverConfig;

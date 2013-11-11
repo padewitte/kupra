@@ -8,6 +8,12 @@ import java.util.Map.Entry;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.UrlRewrite;
 
+/**
+ * Rewrites rules when -r flag is set.
+ * Very basic. Could be optimized.
+ * @author Pierre-Alban DEWITTE
+ *
+ */
 public class MRCUrlRewrite implements UrlRewrite {
 
 	private Map<String, String> rewriteRules = new HashMap<String, String>();

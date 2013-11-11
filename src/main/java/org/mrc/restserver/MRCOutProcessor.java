@@ -34,8 +34,7 @@ import org.restlet.data.Status;
 
 /**
  * Custom processor used to propagate Custom HttpHeaders.
- * @author pierrealban
- *
+ * @author Pierre-Alban DEWITTE
  */
 public class MRCOutProcessor implements Processor {
 
@@ -46,12 +45,16 @@ public class MRCOutProcessor implements Processor {
 				RestletConstants.RESTLET_RESPONSE, Response.class);
 
 		String inBody = in.getBody(String.class);
+		
+		//Send a 204 and no no content in payload where nothing found
 		if (inBody == null || "".equals(inBody) || "[]".equals(inBody)) {
 			response.setStatus(Status.SUCCESS_NO_CONTENT);
 		} else {
 			response.setStatus(Status.SUCCESS_OK);
 			response.setEntity(inBody, MediaType.APPLICATION_JSON);
 		}
+		
+		//Copy headers
 		Form responseHeaders = (Form) response.getAttributes().get(
 				"org.restlet.http.headers");
 		if (responseHeaders == null) {

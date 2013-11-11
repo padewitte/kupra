@@ -35,6 +35,12 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
+/**
+ * Very basic tests.
+ * 
+ * @author pierrealban
+ *
+ */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestRestEnpoints extends CamelTestSupport {
 

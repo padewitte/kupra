@@ -27,9 +27,17 @@ import org.apache.camel.util.CamelContextHelper;
 import org.mrc.restserver.launcher.MRCServerBean;
 import org.springframework.stereotype.Component;
 
+/**
+ * Build Camel route for a conf.
+ * @author Pierre-Alban DEWITTE
+ *
+ */
 @Component
 public class MRCRouteBuilder extends RouteBuilder {
 
+	/**
+	 * The configuration.
+	 */
 	private MRCServerBean beanServer;
 
 	public MRCRouteBuilder() {

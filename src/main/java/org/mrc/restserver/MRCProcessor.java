@@ -33,6 +33,12 @@ import org.restlet.data.Form;
 
 import com.mongodb.util.JSON;
 
+/**
+ * Make the glue between Restlet and MongoDB components.
+ * 
+ * @author pierrealban
+ * 
+ */
 public class MRCProcessor implements Processor {
 
 	public void process(Exchange exchange) throws Exception {
@@ -42,22 +48,30 @@ public class MRCProcessor implements Processor {
 		String collection = in.getHeader("collection", String.class);
 		String idHeader = in.getHeader("id", String.class);
 
-		// Cas d'un get filtré
+		// Copy query header in body if present
 		Form headers = in.getHeader("org.restlet.http.headers", Form.class);
 		if (headers != null && headers.getFirst("query") != null) {
 			body = headers.getFirst("query").getValue();
 		}
-		
-		Iterator<Entry<String, String>> entriesSet = headers.getValuesMap().entrySet().iterator(); 
-		while(entriesSet.hasNext()){
-			Entry<String,String> entrie = entriesSet.next();
-			exchange.getIn().setHeader("CamelMongoDb"+entrie.getKey(), entrie.getValue());
+		// Setting collection headr
+		if (collection != null && !"".equals(collection)) {
+			exchange.getIn().setHeader("CamelMongoDbCollection", collection);
 		}
 
-		// Cas ou l'id est fourni dans l'URL (DELETE / GET)
+		// Copy all Http Incoming Headers into Camel headers adding CamelMongoDb
+		// into it.
+		Iterator<Entry<String, String>> entriesSet = headers.getValuesMap()
+				.entrySet().iterator();
+		while (entriesSet.hasNext()) {
+			Entry<String, String> entrie = entriesSet.next();
+			exchange.getIn().setHeader("CamelMongoDb" + entrie.getKey(),
+					entrie.getValue());
+		}
+
+		// Case id header present
 		if (idHeader != null && !"".equals(idHeader)) {
-			// Cas particulier du GET avec un ID géré différement par Mongo
-			// Camel
+			// the getById mongoDb component need id in body. In case of byId
+			// operation make a copy.
 			if (exchange.getFromRouteId().startsWith("byId")
 					&& "GET".equals(in.getHeader("CamelHttpMethod"))) {
 				body = idHeader;
@@ -70,15 +84,13 @@ public class MRCProcessor implements Processor {
 			}
 		}
 
+		// setting the body if set by headers
 		if (body != null && !"".equals(body)) {
-			exchange.getIn().setBody(body);
-		} 
-		else if (in.getBody() != null) {
+			exchange.getIn().setBody(JSON.parse(body));
+		} else if (in.getBody() != null) {
+			// Copying http workload into Camel body with a JSON parse. Needed
+			// for PUT operation (this it a workaround).
 			exchange.getIn().setBody(JSON.parse(in.getBody(String.class)));
-		}
-		// Gestion de la collection dynamique
-		if (collection != null && !"".equals(collection)) {
-			exchange.getIn().setHeader("CamelMongoDbCollection", collection);
 		}
 
 	}

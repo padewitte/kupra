@@ -26,6 +26,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.restlet.data.Form;
 
+/**
+ * Predicate used to route with a Http header.
+ * @author Pierre-Alban DEWITTE
+ *
+ */
 public class RestletHttpHeaderPredicate implements Predicate {
 	
 	private String headerToCheck;

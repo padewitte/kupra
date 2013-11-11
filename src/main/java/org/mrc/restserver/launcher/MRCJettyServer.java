@@ -28,6 +28,11 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 
+/**
+ * Simple class to start a local static content Jetty Server.
+ * @author Pierre-Alban DEWITTE
+ *
+ */
 public class MRCJettyServer {
 		
 	public static void runJettyServer(int port, String ressourceBase) throws Exception {

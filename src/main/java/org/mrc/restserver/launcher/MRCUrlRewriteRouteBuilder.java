@@ -2,6 +2,11 @@ package org.mrc.restserver.launcher;
 
 import org.apache.camel.builder.RouteBuilder;
 
+/**
+ * Camel route when URL rewrite is acivated.
+ * @author Pierre-Alban DEWITTE.
+ *
+ */
 public class MRCUrlRewriteRouteBuilder extends RouteBuilder {
 
 	private MRCServerBean rootServer;

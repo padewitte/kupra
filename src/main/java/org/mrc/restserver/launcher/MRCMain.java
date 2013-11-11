@@ -26,6 +26,11 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 import com.beust.jcommander.JCommander;
 
+/**
+ * Main class.
+ * @author pierrealban
+ *
+ */
 public class MRCMain {
 
 	private static String programName;

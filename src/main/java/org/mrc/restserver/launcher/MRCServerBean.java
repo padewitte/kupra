@@ -22,17 +22,36 @@
  */
 package org.mrc.restserver.launcher;
 
+/**
+ * Configuration of a MRC Server.
+ * @author Pierre-Alban DEWITTE
+ *
+ */
 public class MRCServerBean {
 
+	/**
+	 * @param bindingAdress
+	 * @param listenPort
+	 * @param defaultContext
+	 */
 	public MRCServerBean(String bindingAdress, Integer listenPort,
 			String defaultContext) {
 		this.bindingAdress = bindingAdress;
 		this.listenPort = listenPort;
 		this.defaultContext = defaultContext;
 	}
-	
+
+	/**
+	 * @param bindingAdress
+	 * @param listenPort
+	 * @param defaultContext
+	 * @param defaultDatabase
+	 * @param mongoDbBean
+	 * @param mongoDbUri
+	 */
 	public MRCServerBean(String bindingAdress, Integer listenPort,
-			String defaultContext, String defaultDatabase, String mongoDbBean, String mongoDbUri) {
+			String defaultContext, String defaultDatabase, String mongoDbBean,
+			String mongoDbUri) {
 		this.bindingAdress = bindingAdress;
 		this.listenPort = listenPort;
 		this.defaultContext = defaultContext;

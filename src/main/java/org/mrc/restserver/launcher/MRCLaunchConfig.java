@@ -27,6 +27,12 @@ import java.util.List;
 
 import com.beust.jcommander.Parameter;
 
+/**
+ * Configuration for the shell launch options.
+ * @see http://jcommander.org/ 
+ * @author Pierre-Alban DEWITTE
+ *
+ */
 public class MRCLaunchConfig {
 
 	@Parameter(names = { "-a", "--bindingAdress" }, description = "Adress binded by REST server.")
