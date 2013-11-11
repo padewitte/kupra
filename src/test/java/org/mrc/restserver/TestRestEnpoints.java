@@ -46,7 +46,6 @@ public class TestRestEnpoints extends CamelTestSupport {
 
 	//TODO Failed deleted by id case
 	
-	
 	private static final String SERVER_PREFIX = "http4://127.0.0.1:8667/mrc";
 
 	private void checkHttpCode200(Exchange exchange) {
