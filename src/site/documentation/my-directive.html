@@ -19,11 +19,13 @@
 		<div class="alert alert-info">{{testname.request}}</div>
 	</div>
 
-	<div class="col-md-3" ng-switch="testname.state">
-		<div class="alert alert-danger" ng-switch-when="KO">
-			{{testname.result}}</div>
-		<div class="alert alert-success" ng-switch-when="OK">
-			{{testname.result}}</div>
-		<div ng-switch-default></div>
+	<div class="col-md-3">
+		<div class="alert alert-{{testname.result.color}}">
+			{{testname.result.method}} {{testname.result.url}} <br/>
+			{{testname.result.code}}<br />
+			{{testname.result.headers | json }}<br />
+			{{testname.result.content | json }}<br />
+			<span></span>
+		</div>
 	</div>
 </div>
