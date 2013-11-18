@@ -47,8 +47,7 @@
 						<span class="glyphicon glyphicon-play"></span> RUN
 					</button>
 				</div>
-				<div class="col-md-9  col-md-offset-1">{{testname.name}} and
-					make tests</div>
+				<div class="col-md-9  col-md-offset-1">{{testname.name}}</div>
 			</div>
 			<div class="alert alert-info">
 				<strong>{{testname.request.method}}
@@ -71,7 +70,7 @@
 					<li ng-repeat="header in testname.result.headers"><em>{{
 							header }}</em></li>
 				</ul>
-				<p class="label label-default">{{testname.result.content}}</p>
+				<div  class="alert alert-{{testname.result.contentColor}}">{{testname.result.content | json}}</div>
 			</div>
 		</div>
 	</div>

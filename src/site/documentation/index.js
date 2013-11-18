@@ -13,7 +13,7 @@ mrcApp.controller('MrcCtrl', function MrcCtrl($scope, $http) {
 			}).success(function(data, status, headers, config) {
 				testInProgress.state = 'OK';
 				testInProgress.result =null;
-				testInProgress.result = {method : config.method, url: '', code: 'Response code : ' + status, content : data, color : 'success' };
+				testInProgress.result = {method : config.method, url: '', code: 'Response code : ' + status, content : data, color : 'success', contentColor : 'warning' };
 				if(headers().resulttotalsize){
 					testInProgress.result.headers = [ "resulttotalsize : "+headers().resulttotalsize,"resultpagesize : "+headers().resultpagesize];
 				}
@@ -24,7 +24,7 @@ mrcApp.controller('MrcCtrl', function MrcCtrl($scope, $http) {
 			}).error(function(data, status, headers, config) {
 				testInProgress.state = 'KO';
 				testInProgress.result =null;
-				testInProgress.result = {method : config.method, url: '', code: 'Response code : ' + status, content : data, color : 'danger' };
+				testInProgress.result = {method : config.method, url: '', code: 'Response code : ' + status, content : data, color : 'danger', contentColor : 'warning' };
 			});
 	};
 	
