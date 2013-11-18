@@ -1,55 +1,56 @@
 var mrcApp = angular.module('MrcApp', []);
 mrcApp.controller('MrcCtrl', function MrcCtrl($scope, $http) {
 
-	$scope.step1_postData = "MyData";
 
 	var runFunction = function() {
 		var testInProgress = this;
 		testInProgress.state = 'RUNNING';
-		
+
 		$http({
-				method : 'GET',
-				url : '/mrc/test'
+				method :  testInProgress.request.method,
+				url : testInProgress.request.url,
+				data : testInProgress.request.content
 			}).success(function(data, status, headers, config) {
 				testInProgress.state = 'OK';
-				testInProgress.result = {method : config.method, url: '', code: status, content : data, color : 'success' };
+				testInProgress.result =null;
+				testInProgress.result = {method : config.method, url: '', code: 'Response code : ' + status, content : data, color : 'success' };
 				if(headers().resulttotalsize){
-					testInProgress.result.headers = ["resulttotalsize : "+headers().resulttotalsize,"resultpagesize : "+headers().resultpagesize];
+					testInProgress.result.headers = [ "resulttotalsize : "+headers().resulttotalsize,"resultpagesize : "+headers().resultpagesize];
 				}
+				if(headers().recordsaffected){
+					testInProgress.result.headers = ["RecordsAffected : "+headers().recordsaffected];
+				}
+				
 			}).error(function(data, status, headers, config) {
 				testInProgress.state = 'KO';
-				testInProgress.result = JSON.stringify(data);
+				testInProgress.result =null;
+				testInProgress.result = {method : config.method, url: '', code: 'Response code : ' + status, content : data, color : 'danger' };
 			});
 	};
 	
-	$scope.test1_postData = {
-		name : 'Insert a new document in MongoDB database',
-		request : 'POST ...',
-		state : 'NOTRUN',
-		result : 'POST ... result',
-		run : runFunction,
-		classRes : "success"
+	var test1_postData = {
+			name : 'Delete all items in collection',
+			request : {method : 'DELETE', url : '/mrc/test/1'},
+			state : 'NOTRUN',
+			//result : {method : '', url: '', code: '', headers : '', content : '', color : 'success' },
+			result : {},
+			run : runFunction
 	};
-	$scope.test2_postData = {
+	var test2_postData = {
 		name : 'Insert again a new document in MongoDB database',
-		request : {method : 'POST ', url : ''},
+		request : {method : 'POST', url : '/mrc/test',content : "{'_id' : '1', 'name' : 'Sylvain CHAVANEL'}", headers : []},
 		state : 'NOTRUN',
-		result : {},
 		//result : {method : '', url: '', code: '', headers : '', content : '', color : 'success' },
+		result : {},
 		run : runFunction
 	};
-});
-
-mrcApp.directive('myDirective', function() {
-	
-	return {
-		restrict : 'EA',
-		scope : {
-			testname : '=testname'
-
-		},
-		templateUrl : 'my-directive.html'
-	};
-	
-
+	var countItems = {
+			name : 'count items in colection test',
+			request : {method : 'GET', url : '/mrc/test', headers : [ {"count" : true}]},
+			state : 'NOTRUN',
+			//result : {method : '', url: '', code: '', headers : '', content : '', color : 'success' },
+			result : {},
+			run : runFunction
+		};
+	$scope.testsToRun = [test1_postData,test2_postData,countItems];
 });

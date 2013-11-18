@@ -17,12 +17,7 @@
 </style>
 </head>
 <body ng-controller="MrcCtrl">
-	<div>
-		<my-directive testname="test1_postData"></my-directive>
-		<hr>
-		<my-directive testname="test2_postData"></my-directive>
 
-	</div>
 	<div class="jumbotron">
 		<div class="row">
 			<div class="col-md-8 col-md-offset-2">
@@ -30,74 +25,55 @@
 			</div>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row" ng-repeat="testname in testsToRun">
 		<div class="col-md-4 col-md-offset-2">
-			<p>Test if your database is up and running
-			<p>
-				<br />
-		</div>
-		<div class="col-md-1">
-			<button type="button" class="btn btn-info">
-				<span class="glyphicon glyphicon-play"></span> RUN
-			</button>
-		</div>
-		<div class="col-md-3">{{step1_postData}}</div>
-	</div>
-	<div class="row">
-		<div class="col-md-4 col-md-offset-2">
-			<p>Test if your database is up and running
-			<p>
-				<br />
-		</div>
-		<div class="col-md-1">
-			<button type="button" class="btn btn-warning">
-				<span class="glyphicon glyphicon-refresh"></span> RUNNING
-			</button>
-		</div>
-		<div class="col-md-3"></div>
-	</div>
-	<div class="row">
-		<div class="col-md-4 col-md-offset-2">
-			<p>Test if your database is up and running
-			<p>
-				<br />
-		</div>
-		<div class="col-md-1">
-			<button type="button" class="btn btn-success">
-				<span class="glyphicon glyphicon-thumbs-up"></span> OK
-			</button>
-		</div>
-		<div class="col-md-3"></div>
-	</div>
-	<div class="row">
-		<div class="col-md-4 col-md-offset-2">
-			<p>Test if your database is up and running
-			<p>
-				<br />
-		</div>
-		<div class="col-md-1">
-			<button type="button" class="btn btn-danger">
-				<span class="glyphicon glyphicon-thumbs-down"></span> KO
-			</button>
-		</div>
-		<div class="col-md-3"></div>
-	</div>
+			<div class="row">
+				<div class="col-md-2" ng-switch="testname.state">
+					<button type="button" class="btn btn-success"
+						ng-click="testname.run()" ng-switch-when="OK">
+						<span class="glyphicon glyphicon-thumbs-up "></span> OK
+					</button>
+					<button type="button" class="btn btn-warning"
+						ng-click="testname.run()" ng-switch-when="RUNNING">
+						<span class="glyphicon glyphicon-refresh"></span> RUNNING
+					</button>
 
-	<div class="row">
-		<div class="col-md-4 col-md-offset-2">
-			<p>Add your first document in collection test</p>
-			<code>
-				POST /mrc/test <br /> &nbsp;&nbsp;{id="1"" name="Sylvain CHAVANEL"}
-			</code>
+					<button type="button" class="btn btn-danger"
+						ng-click="testname.run()" ng-switch-when="KO">
+						<span class="glyphicon glyphicon-thumbs-down "></span> KO
+					</button>
+					<button type="button" class="btn btn-info"
+						ng-click="testname.run()" ng-switch-default>
+						<span class="glyphicon glyphicon-play"></span> RUN
+					</button>
+				</div>
+				<div class="col-md-9  col-md-offset-1">{{testname.name}} and
+					make tests</div>
+			</div>
+			<div class="alert alert-info">
+				<strong>{{testname.request.method}}
+					{{testname.request.url}}</strong> <br />
+				<ul>
+					<li ng-repeat="header in testname.request.headers"><em>{{
+							header }}</em></li>
+				</ul>
+				<p class="label label-default">{{testname.request.content
+					| json }}</p>
+			</div>
 		</div>
-		<div class="col-md-1">
-			<button type="button" class="btn btn-info">
-				<span class="glyphicon glyphicon-play"></span> RUN
-			</button>
+
+		<div class="col-md-4">
+			<div class="alert alert-{{testname.result.color}}">
+				<p>
+					<strong>{{testname.result.code}}</strong>
+				</p>
+				<ul>
+					<li ng-repeat="header in testname.result.headers"><em>{{
+							header }}</em></li>
+				</ul>
+				<p class="label label-default">{{testname.result.content}}</p>
+			</div>
 		</div>
-		<div class="col-md-3"></div>
 	</div>
-
-
 </body>
 </html>

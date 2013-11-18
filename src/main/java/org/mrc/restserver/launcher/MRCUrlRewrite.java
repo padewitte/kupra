@@ -19,11 +19,13 @@ public class MRCUrlRewrite implements UrlRewrite {
 	private Map<String, String> rewriteRules = new HashMap<String, String>();
 	private MRCServerBean contentServer;
 
-	public MRCUrlRewrite(MRCServerBean contentServer,
+	public MRCUrlRewrite(MRCServerBean contentServer,MRCServerBean documentationServer,
 			List<MRCServerBean> otherServers) {
+		rewriteRules.put(documentationServer.getDefaultContext(),
+				"" + documentationServer.getListenPort());
 		for (MRCServerBean server : otherServers) {
 			rewriteRules.put(server.getDefaultContext(),
-					"" + server.getListenPort());
+					"" + server.getListenPort()+"/"+server.getDefaultContext());
 		}
 		this.contentServer = contentServer;
 	}
@@ -35,12 +37,12 @@ public class MRCUrlRewrite implements UrlRewrite {
 			if (url.matches("http://.*" + (contentServer.getListenPort()) + "/"
 					+ rule.getKey() + ".*")) {
 				ret = url.replace(":" + (contentServer.getListenPort()) + "/"
-						+ rule.getKey(), ":" + rule.getValue() + "/");
+						+ rule.getKey(), ":" + rule.getValue());
 			} else if (url.contains("/" + rule.getKey())) {
-				ret = url.replace("/" + rule.getKey(), ":" + rule.getValue()
-						+ "/");
+				ret = url.replace("/" + rule.getKey(), ":" + rule.getValue());
 			}
 		}
+		//URL  http://127.0.0.1:8670 not rewrite
 		return ret;
 	}
 

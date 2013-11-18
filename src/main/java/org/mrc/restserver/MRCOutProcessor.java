@@ -66,6 +66,9 @@ public class MRCOutProcessor implements Processor {
 				in.getHeader("CamelMongoDbResultTotalSize", String.class));
 		responseHeaders.add("ResultPageSize",
 				in.getHeader("CamelMongoDbResultPageSize", String.class));
+		responseHeaders.add("RecordsAffected",
+				in.getHeader("CamelMongoDbRecordsAffected", String.class));
+		
 
 		exchange.getOut().setBody(response);
 	}

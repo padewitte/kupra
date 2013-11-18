@@ -95,16 +95,13 @@ public class MRCLauncher {
 
 		//Run documentation server
 		MRCServerBean documentationServer = getDocServer(serverConfig);
-		if (documentationServer != null) {
-			serversList.add(documentationServer);
-		}
 		
 		//Run content server
 		MRCServerBean contentServer = getContentServer(serverConfig);
 
 		// Manage the rewrite rules
 		if (serverConfig.getRewrite()) {
-			main.bind("urlRewriteCusto", new MRCUrlRewrite(contentServer,
+			main.bind("urlRewriteCusto", new MRCUrlRewrite(contentServer,documentationServer,
 					serversList));
 			main.addRouteBuilder(new MRCUrlRewriteRouteBuilder(contentServer));
 		}
