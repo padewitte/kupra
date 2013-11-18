@@ -1,5 +1,5 @@
 /**
- * The MIT License (MIT)
+ The MIT License (MIT)
  * 
  * Copyright (c) 2013 Pierre-Alban DEWITTE
  * 
@@ -22,15 +22,28 @@
  */
 package org.mrc.restserver;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mongodb.CamelMongoDbException;
+import org.apache.camel.component.restlet.RestletConstants;
 import org.apache.camel.util.CamelContextHelper;
 import org.mrc.restserver.launcher.MRCServerBean;
+import org.restlet.Response;
+import org.restlet.data.MediaType;
+import org.restlet.data.Status;
 import org.springframework.stereotype.Component;
+
+import com.mongodb.CommandFailureException;
+import com.mongodb.MongoException;
+import com.mongodb.WriteConcernException;
+import com.mongodb.util.JSON;
 
 /**
  * Build Camel route for a conf.
+ * 
  * @author Pierre-Alban DEWITTE
- *
+ * 
  */
 @Component
 public class MRCRouteBuilder extends RouteBuilder {
@@ -54,64 +67,87 @@ public class MRCRouteBuilder extends RouteBuilder {
 			beanServer = CamelContextHelper.mandatoryLookup(getContext(),
 					"httpServer", MRCServerBean.class);
 		}
-		
+
+		onException(Throwable.class).handled(true).process(
+				new MRCErrorProcessor());
+
 		from(
-				"restlet:http://"
-						+ beanServer.getBindingAdress()
-						+ ":"
-						+ beanServer.getListenPort()
-						+ "/"
+				"restlet:http://" + beanServer.getBindingAdress() + ":"
+						+ beanServer.getListenPort() + "/"
 						+ beanServer.getDefaultContext()
 						+ "/{collection}?restletMethods=post,get,put,delete")
-				.routeId("defaultRoute-"+beanServer.getMongoDbBean())
+				.routeId("defaultRoute-" + beanServer.getMongoDbBean())
 				.process(new MRCProcessor())
 				.choice()
 				.when(header("CamelHttpMethod").isEqualTo("GET"))
-				//Use count operation if count flag is set
-					.choice()
-						.when(new RestletHttpHeaderPredicate("count")).to("mongodb:"+beanServer.getMongoDbBean()+"?database=" + beanServer.getDefaultDatabase()
-						+ "&collection=test&operation=count&dynamicity=true").process(new MRCOutProcessor())
-						.when(new RestletHttpHeaderPredicate("getColStats")).to("mongodb:"+beanServer.getMongoDbBean()+"?database=" + beanServer.getDefaultDatabase()
-						+ "&collection=test&operation=getColStats&dynamicity=true").process(new MRCOutProcessor())
-						.when(new RestletHttpHeaderPredicate("aggregate")).to("mongodb:"+beanServer.getMongoDbBean()+"?database=" + beanServer.getDefaultDatabase()
-								+ "&collection=test&operation=aggregate&dynamicity=true").process(new MRCOutProcessor())
-						.otherwise().to("mongodb:"+beanServer.getMongoDbBean()+"?database=" + beanServer.getDefaultDatabase()
-						+ "&collection=test&operation=findAll&dynamicity=true").process(new MRCOutProcessor())
-						.endChoice()
+				// Use count operation if count flag is set
+				.choice()
+				.when(new RestletHttpHeaderPredicate("count"))
+				.to("mongodb:" + beanServer.getMongoDbBean() + "?database="
+						+ beanServer.getDefaultDatabase()
+						+ "&collection=test&operation=count&dynamicity=true")
+				.process(new MRCOutProcessor())
+				.when(new RestletHttpHeaderPredicate("getColStats"))
+				.to("mongodb:"
+						+ beanServer.getMongoDbBean()
+						+ "?database="
+						+ beanServer.getDefaultDatabase()
+						+ "&collection=test&operation=getColStats&dynamicity=true")
+				.process(new MRCOutProcessor())
+				.when(new RestletHttpHeaderPredicate("aggregate"))
+				.to("mongodb:"
+						+ beanServer.getMongoDbBean()
+						+ "?database="
+						+ beanServer.getDefaultDatabase()
+						+ "&collection=test&operation=aggregate&dynamicity=true")
+				.process(new MRCOutProcessor())
+				.otherwise()
+				.to("mongodb:" + beanServer.getMongoDbBean() + "?database="
+						+ beanServer.getDefaultDatabase()
+						+ "&collection=test&operation=findAll&dynamicity=true")
+				.process(new MRCOutProcessor())
+				.endChoice()
 				.when(header("CamelHttpMethod").isEqualTo("POST"))
-				.to("mongodb:"+beanServer.getMongoDbBean()+"?database=" + beanServer.getDefaultDatabase()
-						+ "&collection=test&operation=insert&dynamicity=true").process(new MRCOutProcessor())
+				.to("mongodb:" + beanServer.getMongoDbBean() + "?database="
+						+ beanServer.getDefaultDatabase()
+						+ "&collection=test&operation=insert&dynamicity=true")
+				.process(new MRCOutProcessor())
 				.when(header("CamelHttpMethod").isEqualTo("PUT"))
-				.to("mongodb:"+beanServer.getMongoDbBean()+"?database=" + beanServer.getDefaultDatabase()
-						+ "&collection=test&operation=update&dynamicity=true").process(new MRCOutProcessor())
+				.to("mongodb:" + beanServer.getMongoDbBean() + "?database="
+						+ beanServer.getDefaultDatabase()
+						+ "&collection=test&operation=update&dynamicity=true")
+				.process(new MRCOutProcessor())
 				.when(header("CamelHttpMethod").isEqualTo("DELETE"))
-				.to("mongodb:"+beanServer.getMongoDbBean()+"?database=" + beanServer.getDefaultDatabase()
-						+ "&collection=test&operation=remove&dynamicity=true").process(new MRCOutProcessor())
+				.to("mongodb:" + beanServer.getMongoDbBean() + "?database="
+						+ beanServer.getDefaultDatabase()
+						+ "&collection=test&operation=remove&dynamicity=true")
+				.process(new MRCOutProcessor())
 		// .otherwise().end();
 		;
 
 		from(
-				"restlet:http://"
-						+ beanServer.getBindingAdress()
-						+ ":"
-						+ beanServer.getListenPort()
-						+ "/"
+				"restlet:http://" + beanServer.getBindingAdress() + ":"
+						+ beanServer.getListenPort() + "/"
 						+ beanServer.getDefaultContext()
 						+ "/{collection}/{id}?restletMethods=get,put,delete")
-				.routeId("byId-"+beanServer.getMongoDbBean())
+				.routeId("byId-" + beanServer.getMongoDbBean())
 				.process(new MRCProcessor())
 				.choice()
 				.when(header("CamelHttpMethod").isEqualTo("GET"))
-					.to("mongodb:"+beanServer.getMongoDbBean()+"?database=" + beanServer.getDefaultDatabase()
-						+ "&collection=test&operation=findById&dynamicity=true").process(new MRCOutProcessor())
+				.to("mongodb:" + beanServer.getMongoDbBean() + "?database="
+						+ beanServer.getDefaultDatabase()
+						+ "&collection=test&operation=findById&dynamicity=true")
+				.process(new MRCOutProcessor())
 				.when(header("CamelHttpMethod").isEqualTo("PUT"))
-					.to("mongodb:"+beanServer.getMongoDbBean()+"?database=" + beanServer.getDefaultDatabase()
-						+ "&collection=test&operation=save&dynamicity=true").process(new MRCOutProcessor())
+				.to("mongodb:" + beanServer.getMongoDbBean() + "?database="
+						+ beanServer.getDefaultDatabase()
+						+ "&collection=test&operation=save&dynamicity=true")
+				.process(new MRCOutProcessor())
 				.when(header("CamelHttpMethod").isEqualTo("DELETE"))
-					.to("mongodb:"+beanServer.getMongoDbBean()+"?database=" + beanServer.getDefaultDatabase()
-						+ "&collection=test&operation=remove&dynamicity=true").process(new MRCOutProcessor())
-		;
+				.to("mongodb:" + beanServer.getMongoDbBean() + "?database="
+						+ beanServer.getDefaultDatabase()
+						+ "&collection=test&operation=remove&dynamicity=true")
+				.process(new MRCOutProcessor());
 
 	}
-
 }
