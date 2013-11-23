@@ -15,7 +15,7 @@ Once you run MRC, you can start testing it. Curl come with commons Linux distro'
 `curl -X GET http://127.0.0.1:8667/mrc/test`   
 produce  `[{ "_id" : "1" , "name" : "Sylvain CHAVANEL"}, { "_id" : "2" , "name" : "Thomas VOECKLER"}]`   
 
-**Show you the collection item with id 2**   
+**Show the item the collection item with id 2**   
 `curl -X GET http://127.0.0.1:8667/mrc/test/2`   
 produce `{ "_id" : "2" , "name" : "Thomas VOECKLER"}`
 
