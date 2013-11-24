@@ -22,22 +22,10 @@
  */
 package org.mrc.restserver;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mongodb.CamelMongoDbException;
-import org.apache.camel.component.restlet.RestletConstants;
 import org.apache.camel.util.CamelContextHelper;
 import org.mrc.restserver.launcher.MRCServerBean;
-import org.restlet.Response;
-import org.restlet.data.MediaType;
-import org.restlet.data.Status;
 import org.springframework.stereotype.Component;
-
-import com.mongodb.CommandFailureException;
-import com.mongodb.MongoException;
-import com.mongodb.WriteConcernException;
-import com.mongodb.util.JSON;
 
 /**
  * Build Camel route for a conf.
@@ -87,6 +75,7 @@ public class MRCRouteBuilder extends RouteBuilder {
 						+ beanServer.getDefaultDatabase()
 						+ "&collection=test&operation=count&dynamicity=true")
 				.process(new MRCOutProcessor())
+				// getColStatsCase
 				.when(new RestletHttpHeaderPredicate("getColStats"))
 				.to("mongodb:"
 						+ beanServer.getMongoDbBean()

@@ -8,11 +8,17 @@ mrcApp.controller('MrcCtrl', function MrcCtrl($scope, $http) {
 		$http({
 				method :  testInProgress.request.method,
 				url : testInProgress.request.url,
-				data : testInProgress.request.content
+				data : testInProgress.request.content,
+				headers : testInProgress.request.headers
 			}).success(function(data, status, headers, config) {
 				testInProgress.state = 'OK';
-				testInProgress.result =null;
-				testInProgress.result = {method : config.method, url: '', code: 'Response code : ' + status, content : data, color : 'success', contentColor : 'warning' };
+				testInProgress.result = null;
+				testInProgress.result = {method : config.method, url: '', code: 'Response code : ' + status, color : 'white', contentColor : 'info' };
+				if(status == 204){
+					testInProgress.result.content = 'NO CONTENT';
+				}else{
+					testInProgress.result.content = data;
+				}
 				if(headers().resulttotalsize){
 					testInProgress.result.headers = [ "resulttotalsize : "+headers().resulttotalsize,"resultpagesize : "+headers().resultpagesize];
 				}
@@ -23,24 +29,28 @@ mrcApp.controller('MrcCtrl', function MrcCtrl($scope, $http) {
 			}).error(function(data, status, headers, config) {
 				testInProgress.state = 'KO';
 				testInProgress.result =null;
-				testInProgress.result = {method : config.method, url: '', code: 'Response code : ' + status, content : data, color : 'danger', contentColor : 'warning' };
+				testInProgress.result = {method : config.method, url: '', code: 'Response code : ' + status, content : data, color : 'danger', contentColor : 'info' };
 			});
 	};
 	
-	var test_postFirstData = {
-			name : 'Delete all items in collection',
+	var test_deleteOne = {
+			name : 'Delete item with id 1',
 			request : {method : 'DELETE', url : '/mrc/test/1'},
 			state : 'NOTRUN',
-			//result : {method : '', url: '', code: '', headers : '', content : '', color : 'success' },
-			result : {},
 			run : runFunction
 	};
+	
+	var test_postFirstData = {
+			name : 'Insert a first document in MongoDB database',
+			request : {method : 'POST', url : '/mrc/test',content : "{'_id' : 1, 'name' : 'Sylvain CHAVANEL'}"},
+			state : 'NOTRUN',
+			run : runFunction
+		};
+	
 	var test_postSecondData = {
-		name : 'Insert again a new document in MongoDB database',
-		request : {method : 'POST', url : '/mrc/test',content : "{'_id' : '1', 'name' : 'Sylvain CHAVANEL'}", headers : []},
+		name : 'Insert a second document in MongoDB database',
+		request : {method : 'POST', url : '/mrc/test',content : "{'_id' : 2, 'name' : 'Thomas VOECKLER'}"},
 		state : 'NOTRUN',
-		//result : {method : '', url: '', code: '', headers : '', content : '', color : 'success' },
-		result : {},
 		run : runFunction
 	};
 	
@@ -60,14 +70,14 @@ mrcApp.controller('MrcCtrl', function MrcCtrl($scope, $http) {
 	
 	var test_count = {
 			name : 'Count items in test collection',
-			request : {method : 'GET', url : '/mrc/test', headers : ['count' : true]},
+			request : {method : 'GET', url : '/mrc/test', headers : {'count' : true}},
 			state : 'NOTRUN',
 			run : runFunction
 	};
 	
 	var test_Query = {
 			name : 'Filter items with name equals to Sylvain CHAVANEL',
-			request : {method : 'GET', url : '/mrc/test', headers : ['query' : {'name' : 'Sylvain CHAVANEL'}]},
+			request : {method : 'GET', url : '/mrc/test', headers : {'query' : '{"name" : "Sylvain CHAVANEL"}'}},
 			state : 'NOTRUN',
 			run : runFunction
 	}
@@ -80,12 +90,12 @@ mrcApp.controller('MrcCtrl', function MrcCtrl($scope, $http) {
 	};
 	
 	var test_DeleteAllItems = {
-			name : 'DELETE all items in test collection',
-			request : {method : 'DELETE', url : '/mrc/test/1',headers : ['query' : {'name' : {$exists : true }}]},
+			name : 'Delete all items in test collection',
+			request : {method : 'DELETE', url : '/mrc/test',headers : {'query' : '{"name" : {$exists : true }}'}},
 			state : 'NOTRUN',
 			run : runFunction
 			
 	}
 	
-	$scope.testsToRun = [test_postFirstData,test_postSecondData,test_showTest, test_showTest_byId, test_count, test_Query, test_UpdateById, test_DeleteAllItems];
+	$scope.testsToRun = [test_DeleteAllItems,test_postFirstData,test_postSecondData,test_showTest, test_showTest_byId, test_count, test_Query, test_UpdateById,test_deleteOne];
 });

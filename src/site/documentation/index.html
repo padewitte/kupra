@@ -14,20 +14,73 @@
 .row {
 	margin-bottom: 0.1em;
 }
+
+.angled {
+	background-color: #F4F2FA;
+	background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(.25, rgba(255, 255,
+		255, .2) ), color-stop(.25, transparent), color-stop(.5, transparent),
+		color-stop(.5, rgba(255, 255, 255, .2) ),
+		color-stop(.75, rgba(255, 255, 255, .2) ),
+		color-stop(.75, transparent), to(transparent) );
+	background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .2)
+		25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%,
+		rgba(255, 255, 255, .2) 75%, transparent 75%, transparent );
+	background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, .2)
+		25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%,
+		rgba(255, 255, 255, .2) 75%, transparent 75%, transparent );
+	background-image: -ms-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%,
+		transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%,
+		rgba(255, 255, 255, .2) 75%, transparent 75%, transparent );
+	background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%,
+		transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%,
+		rgba(255, 255, 255, .2) 75%, transparent 75%, transparent );
+	background-image: linear-gradient(45deg, rgba(255, 255, 255, .2) 25%,
+		transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%,
+		rgba(255, 255, 255, .2) 75%, transparent 75%, transparent );
+}
+
+.stripes {
+	-webkit-background-size: 50px 50px;
+	-moz-background-size: 50px 50px;
+	background-size: 50px 50px; /* Controls the size of the stripes */
+	-moz-box-shadow: 1px 1px 8px gray;
+	-webkit-box-shadow: 1px 1px 8px gray;
+	box-shadow: 1px 1px 8px gray;
+}
+li {list-style-type: none;}
+li:before {
+	content: "» "; /* caractère UTF-8 */
+}
+
+.alert-white {
+    color: #674C47;
+    background-color: #FCFAF7;
+    border-color: rgb(188, 232, 241);
+}
+.alert-mini {
+    padding: 5px;
+    margin-bottom: 2px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
 </style>
 </head>
-<body ng-controller="MrcCtrl">
+<body ng-controller="MrcCtrl" class="angled stripes">
 
-	<div class="jumbotron">
-		<div class="row">
-			<div class="col-md-8 col-md-offset-2">
-				<h2>MRC Demo page</h2>
-			</div>
-		</div>
+	<div class="row"> 
+	<div class="page-header col-md-8 col-md-offset-2 alert-white">
+		<h1>
+			MRC <small>demo page</small>
+		</h1>
+		<h4>Just click on <button type="button" class="label label-info">
+						<span class="glyphicon glyphicon-play"></span> 
+					</button></h4>
+	</div>
 	</div>
 	<div class="row" ng-repeat="testname in testsToRun">
-		<div class="col-md-4 col-md-offset-2">
-			<div class="row">
+		<div class="col-md-4 col-md-offset-2  alert alert-white">
+			<div class="row" >
 				<div class="col-md-2" ng-switch="testname.state">
 					<button type="button" class="btn btn-success"
 						ng-click="testname.run()" ng-switch-when="OK">
@@ -35,7 +88,7 @@
 					</button>
 					<button type="button" class="btn btn-warning"
 						ng-click="testname.run()" ng-switch-when="RUNNING">
-						<span class="glyphicon glyphicon-refresh"></span> RUNNING
+						<span class="glyphicon glyphicon-refresh"></span> ...
 					</button>
 
 					<button type="button" class="btn btn-danger"
@@ -44,33 +97,33 @@
 					</button>
 					<button type="button" class="btn btn-info"
 						ng-click="testname.run()" ng-switch-default>
-						<span class="glyphicon glyphicon-play"></span> RUN
+						<span class="glyphicon glyphicon-play"></span> 
 					</button>
 				</div>
-				<div class="col-md-9  col-md-offset-1">{{testname.name}}</div>
+				<div class="col-md-9  col-md-offset-1 ">{{testname.name}}</div>
 			</div>
-			<div class="alert alert-info">
+			<div class="alert-mini alert-info">
 				<strong>{{testname.request.method}}
 					{{testname.request.url}}</strong> <br />
 				<ul>
-					<li ng-repeat="header in testname.request.headers"><em>{{
-							header }}</em></li>
+					<li ng-repeat="(key,val) in testname.request.headers"><em>{{key}}:
+							{{val}}</em></li>
 				</ul>
-				<p class="label label-default">{{testname.request.content
-					| json }}</p>
+				<p class="label label-default alert-gray" style="font-size : 100%;">{{testname.request.content}}</p>
 			</div>
 		</div>
 
 		<div class="col-md-4">
 			<div class="alert alert-{{testname.result.color}}">
 				<p>
-					<strong>{{testname.result.code}}</strong>
+					{{testname.result.code}}
 				</p>
 				<ul>
 					<li ng-repeat="header in testname.result.headers"><em>{{
 							header }}</em></li>
 				</ul>
-				<div  class="alert alert-{{testname.result.contentColor}}">{{testname.result.content | json}}</div>
+				<div class="alert-mini alert-{{testname.result.contentColor}}">{{testname.result.content
+					| json}}</div>
 			</div>
 		</div>
 	</div>

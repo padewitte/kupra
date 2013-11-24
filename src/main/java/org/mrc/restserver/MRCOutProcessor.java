@@ -49,6 +49,8 @@ public class MRCOutProcessor implements Processor {
 		//Send a 204 and no no content in payload where nothing found
 		if (inBody == null || "".equals(inBody) || "[]".equals(inBody)) {
 			response.setStatus(Status.SUCCESS_NO_CONTENT);
+			response.setEntity(null);
+			in.setBody(null);
 		} else {
 			response.setStatus(Status.SUCCESS_OK);
 			response.setEntity(inBody, MediaType.APPLICATION_JSON);
