@@ -151,6 +151,12 @@
 			<artifactId>jcommander</artifactId>
 			<version>${jcommander.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>de.flapdoodle.embed</groupId>
+			<artifactId>de.flapdoodle.embed.mongo</artifactId>
+			<version>1.41</version>
+			<scope>test</scope>
+		</dependency>
 
 
 		<dependency>
@@ -158,8 +164,8 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
 		</dependency>
-		
-		
+
+
 		<!-- For testing purpose -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>

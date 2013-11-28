@@ -17,7 +17,7 @@ public class MRCUrlRewriteRouteBuilder extends RouteBuilder {
 
 	@Override
 	public void configure() throws Exception {
-		from("jetty:http://"+ rootServer.getBindingAdress() + ":" + (rootServer.getListenPort()+1) + "/?matchOnUriPrefix=true")
+		from("jetty:http://"+ rootServer.getBindingAdress() + ":" + (rootServer.getListenPort()+1) + "?matchOnUriPrefix=true")
 		.routeId("LB")
 		.to("jetty:http://"+ rootServer.getBindingAdress() + ":" + (rootServer.getListenPort())  + "?bridgeEndpoint=true&throwExceptionOnFailure=false&urlRewrite=#urlRewriteCusto");
 	}
