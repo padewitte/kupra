@@ -22,14 +22,20 @@
  */
 package org.mrc.restserver.launcher;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.jar.Manifest;
+
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 import com.beust.jcommander.JCommander;
 
 /**
  * Main class.
+ * 
  * @author pierrealban
- *
+ * 
  */
 public class MRCMain {
 
@@ -75,8 +81,8 @@ public class MRCMain {
 		} else if (jct.getMongoDbUri() == null) {
 			// MongoDBURI is mandatory if config param is not used
 			printHelp(jcommand);
-		} else if (jct.getMultiBindingContext() != null &&
-						jct.getMultiBindingContext().size() > 1
+		} else if (jct.getMultiBindingContext() != null
+				&& jct.getMultiBindingContext().size() > 1
 				&& jct.getMongoDbUri().size() != jct.getMultiBindingContext()
 						.size()) {
 			// Check multiBindingContext and MongoDbUri coherence
@@ -125,5 +131,20 @@ public class MRCMain {
 		System.out.println(ReflectionToStringBuilder.toString(jct));
 	}
 
+	private static void readVersion () throws IOException{
+		Enumeration<URL> resources = MRCMain.class.getClassLoader()
+				  .getResources("META-INF/MANIFEST.MF");
+				while (resources.hasMoreElements()) {
+				    try {
+				      Manifest manifest = new Manifest(resources.nextElement().openStream());
+				      // check that this is your manifest and do what you need or get the next one
+				      if("org.mrc.restserver.launcher.MRCMain".equals(manifest.getAttributes("Main-Class"))){
+				    	  System.out.println(manifest.getAttributes("Main-Class"));
+				      }
+				    } catch (IOException E) {
+				      // handle
+				    }
+				}
+	}
 
 }

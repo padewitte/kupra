@@ -22,31 +22,99 @@
  */
 package org.mrc.restserver;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.AfterClass;
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.experimental.theories.suppliers.TestedOn;
 import org.junit.runners.MethodSorters;
+import org.mrc.restserver.launcher.MRCLaunchConfig;
+import org.mrc.restserver.launcher.MRCLauncher;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.util.JSON;
 
 /**
  * Very basic tests.
  * 
  * @author pierrealban
- *
+ * 
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestRestEnpoints extends CamelTestSupport {
 
-	//TODO Failed deleted by id case
-	
+	// public static MongoClientURI MONGO_URI = new MongoClientURI(
+	// "mongodb://test:test@linus.mongohq.com:10040/mrc");
+	public static MongoClientURI MONGO_URI = new MongoClientURI(
+			"mongodb://test:test@127.0.0.1/mrc");
+
+	private static Thread runnable;
+
+	/**
+	 * Checks whether Mongo is running using the connection URI defined in the
+	 * mongodb.test.properties file
+	 * 
+	 * @throws IOException
+	 */
+	@BeforeClass
+	public static void checkMongoRunning() throws IOException {
+		try {
+			new MongoClient(MONGO_URI).getDB("mrc").getCollectionNames();
+			final MRCLaunchConfig jct = new MRCLaunchConfig();
+			jct.setBindingAdress("8667");
+			jct.setBindingContext("mrc");
+			jct.setBindingAdress("0.0.0.0");
+			ArrayList<String> listUri = new ArrayList<String>();
+			listUri.add(MONGO_URI.getURI());
+			jct.setMongoDbUri(listUri);
+			runnable = new Thread() {
+				public void run() {
+					try {
+						new MRCLauncher(jct).launch();
+					} catch (Exception e) {
+						e.printStackTrace();
+						Assume.assumeNoException(e);
+					}
+				}
+			};
+			runnable.start();
+		} catch (Throwable e) {
+			System.err.println("MRC test database @" + MONGO_URI.getURI()
+					+ " not reachable");
+		}
+	}
+
+	@Before
+	public void assumeMrcStarted() {
+		Assume.assumeNotNull(runnable);
+	}
+
+	@AfterClass
+	public static void stopClass() {
+		if (runnable != null) {
+			runnable.interrupt();
+		}
+	}
+
+	@Test
+	public void aAgetDbStats() throws Exception {
+		Exchange exchange = template.request(SERVER_PREFIX + "/", null);
+		System.out.println(exchange.getOut().getBody(String.class));
+		checkHttpCode200(exchange);
+	}
+
 	private static final String SERVER_PREFIX = "http4://127.0.0.1:8667/mrc";
 
 	private void checkHttpCode200(Exchange exchange) {
@@ -54,7 +122,7 @@ public class TestRestEnpoints extends CamelTestSupport {
 				Exchange.HTTP_RESPONSE_CODE, Integer.class);
 		assertEquals("HTTP CODE 200 expected", 200, responseCode);
 	}
-	
+
 	private void checkHttpCode204(Exchange exchange) {
 		int responseCode = exchange.getOut().getHeader(
 				Exchange.HTTP_RESPONSE_CODE, Integer.class);
@@ -104,7 +172,7 @@ public class TestRestEnpoints extends CamelTestSupport {
 		checkHttpCode200(exchange);
 		checkPutPost(exchange);
 		exchange = template.request("direct:POST", new HeaderTestingProcessor(
-				"{'_id' : '2', 'name' : 'Thomas VOECKLER'}", true));
+				"{'_id' : 2, 'name' : 'Thomas VOECKLER'}", true));
 		checkHttpCode200(exchange);
 		checkPutPost(exchange);
 	}
@@ -135,7 +203,7 @@ public class TestRestEnpoints extends CamelTestSupport {
 		String body = exchange.getOut().getBody(String.class);
 		assertNotNull("Body exist", body);
 		BasicDBObject test = (BasicDBObject) JSON.parse(body);
-		assertEquals("Assert Id is 2", "2", test.get("_id"));
+		assertEquals("Assert Id is 2", 2, test.get("_id"));
 		assertTrue("This should be Thomas Voeckler", test.getString("name")
 				.contains("Thomas VOECKLER"));
 	}
@@ -146,7 +214,8 @@ public class TestRestEnpoints extends CamelTestSupport {
 	 * @throws Exception
 	 */
 	public void fTestCount() throws Exception {
-		Exchange exchange = template.request("direct:GET", new HeaderTestingProcessor(null, false, "count"));
+		Exchange exchange = template.request("direct:GET",
+				new HeaderTestingProcessor(null, false, "count"));
 		checkHttpCode200(exchange);
 		String body = exchange.getOut().getBody(String.class);
 		assertNotNull("Body exist", body);
@@ -178,7 +247,8 @@ public class TestRestEnpoints extends CamelTestSupport {
 	public void hTestPutWithFilter() throws Exception {
 		Exchange exchange = template.request("direct:PUT",
 				new HeaderTestingProcessor(
-						"[{name : {$exists : true}}, {$set: {update : true}}]", true));
+						"[{name : {$exists : true}}, {$set: {update : true}}]",
+						true));
 		checkHttpCode200(exchange);
 		checkPutPost(exchange);
 	}
@@ -201,14 +271,15 @@ public class TestRestEnpoints extends CamelTestSupport {
 	 * @throws Exception
 	 */
 	public void jTestGetColStats() throws Exception {
-		Exchange exchange = template.request("direct:GET", new HeaderTestingProcessor(null, false, "getColStats"));
+		Exchange exchange = template.request("direct:GET",
+				new HeaderTestingProcessor(null, false, "getColStats"));
 		checkHttpCode200(exchange);
 		String body = exchange.getOut().getBody(String.class);
 		assertNotNull("Body exist", body);
 		BasicDBObject test = (BasicDBObject) JSON.parse(body);
 		assertEquals("Stats read", 1, test.get("count"));
 	}
-	
+
 	@Override
 	protected RouteBuilder createRouteBuilder() {
 		return new RouteBuilder() {
@@ -219,37 +290,39 @@ public class TestRestEnpoints extends CamelTestSupport {
 						.setHeader(
 								Exchange.HTTP_METHOD,
 								constant(org.apache.camel.component.http4.HttpMethods.DELETE))
-						.to(SERVER_PREFIX+"/test?throwExceptionOnFailure=false")
+						.to(SERVER_PREFIX
+								+ "/test?throwExceptionOnFailure=false")
 						.to("mock:DELETE");
 
 				from("direct:GET")
 						.setHeader(
 								Exchange.HTTP_METHOD,
 								constant(org.apache.camel.component.http4.HttpMethods.GET))
-						.to(SERVER_PREFIX+"/test?throwExceptionOnFailure=false")
+						.to(SERVER_PREFIX
+								+ "/test?throwExceptionOnFailure=false")
 						.to("mock:GET");
 				from("direct:POST")
 						.setHeader(
 								Exchange.HTTP_METHOD,
 								constant(org.apache.camel.component.http4.HttpMethods.POST))
-						.to(SERVER_PREFIX+"/test?throwExceptionOnFailure=false")
+						.to(SERVER_PREFIX
+								+ "/test?throwExceptionOnFailure=false")
 						.to("mock:POST");
 				from("direct:PUT")
 						.setHeader(
 								Exchange.HTTP_METHOD,
 								constant(org.apache.camel.component.http4.HttpMethods.PUT))
-						.to(SERVER_PREFIX+"/test?throwExceptionOnFailure=false")
+						.to(SERVER_PREFIX
+								+ "/test?throwExceptionOnFailure=false")
 						.to("mock:PUT");
 				// operations by ID
 				from("direct:GET_BY_ID")
 						.setHeader(
 								Exchange.HTTP_METHOD,
 								constant(org.apache.camel.component.http4.HttpMethods.GET))
-						.to(SERVER_PREFIX+"/test/2?throwExceptionOnFailure=false")
+						.to(SERVER_PREFIX
+								+ "/test/2?throwExceptionOnFailure=false")
 						.to("mock:GET");
-				// TODO test PUT and DELETE
-				// TODO test aggregate
-
 			}
 		};
 	}
@@ -269,7 +342,8 @@ public class TestRestEnpoints extends CamelTestSupport {
 			this.body = body;
 		}
 
-		public HeaderTestingProcessor(String bodyContent, boolean body, String customFlag) {
+		public HeaderTestingProcessor(String bodyContent, boolean body,
+				String customFlag) {
 			this.bodyContent = bodyContent;
 			this.body = body;
 			this.customFlag = customFlag;
@@ -280,7 +354,7 @@ public class TestRestEnpoints extends CamelTestSupport {
 					.setHeader(
 							Exchange.CONTENT_TYPE,
 							org.apache.camel.component.http4.HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED);
-			if(customFlag != null){
+			if (customFlag != null) {
 				exchange.getIn().setHeader(customFlag, true);
 			}
 			if (body) {
