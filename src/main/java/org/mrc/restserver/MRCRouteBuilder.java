@@ -138,5 +138,19 @@ public class MRCRouteBuilder extends RouteBuilder {
 						+ "&collection=test&operation=remove&dynamicity=true")
 				.process(new MRCOutProcessor());
 
+		// Get col stats
+		from(
+				"restlet:http://" + beanServer.getBindingAdress() + ":"
+						+ beanServer.getListenPort() + "/"
+						+ beanServer.getDefaultContext() + "/")
+				.routeId("dbStats-" + beanServer.getMongoDbBean())
+				.process(new MRCProcessor())
+				.to("mongodb:"
+						+ beanServer.getMongoDbBean()
+						+ "?database="
+						+ beanServer.getDefaultDatabase()
+						+ "&collection=test&operation=getDbStats&dynamicity=true")
+				.process(new MRCOutProcessor());
+
 	}
 }
