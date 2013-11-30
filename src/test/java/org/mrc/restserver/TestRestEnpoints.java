@@ -57,8 +57,7 @@ public class TestRestEnpoints extends CamelTestSupport {
 
 	// public static MongoClientURI MONGO_URI = new MongoClientURI(
 	// "mongodb://test:test@linus.mongohq.com:10040/mrc");
-	public static MongoClientURI MONGO_URI = new MongoClientURI(
-			"mongodb://test:test@127.0.0.1/mrc");
+	public static MongoClientURI MONGO_URI;
 
 	private static Thread runnable;
 
@@ -71,6 +70,14 @@ public class TestRestEnpoints extends CamelTestSupport {
 	@BeforeClass
 	public static void checkMongoRunning() throws IOException {
 		try {
+
+			if (System.getenv("MONGODB_URL") == null) {
+				MONGO_URI = new MongoClientURI(
+						"mongodb://test:test@127.0.0.1/mrc");
+			} else {
+				MONGO_URI = new MongoClientURI(System.getenv("MONGODB_URL"));
+			}
+
 			new MongoClient(MONGO_URI).getDB("mrc").getCollectionNames();
 			final MRCLaunchConfig jct = new MRCLaunchConfig();
 			jct.setBindingAdress("8667");
@@ -85,7 +92,6 @@ public class TestRestEnpoints extends CamelTestSupport {
 						new MRCLauncher(jct).launch();
 					} catch (Exception e) {
 						e.printStackTrace();
-						Assume.assumeNoException(e);
 					}
 				}
 			};
@@ -97,8 +103,9 @@ public class TestRestEnpoints extends CamelTestSupport {
 	}
 
 	@Before
-	public void assumeMrcStarted() {
+	public void setUp() throws Exception {
 		Assume.assumeNotNull(runnable);
+		super.setUp();
 	}
 
 	@AfterClass
