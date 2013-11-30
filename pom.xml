@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mrc</groupId>
 	<artifactId>mrc</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.0.4</version>
 	<name>MongoDB REST Camel</name>
 	<description>A simple REST interface for MongoDB written with Apache Camel</description>
 

@@ -100,10 +100,10 @@ public class MRCLauncher {
 		MRCServerBean contentServer = getContentServer(serverConfig);
 
 		// Manage the rewrite rules
-		if (serverConfig.getRewrite()) {
+		if (documentationServer != null || contentServer!= null ) {
 			main.bind("urlRewriteCusto", new MRCUrlRewrite(contentServer,documentationServer,
 					serversList));
-			main.addRouteBuilder(new MRCUrlRewriteRouteBuilder(contentServer));
+			main.addRouteBuilder(new MRCUrlRewriteRouteBuilder(contentServer, 8670));
 		}
 
 		// Come get some !
@@ -121,7 +121,7 @@ public class MRCLauncher {
 		if (configServer.getDocumentation()) {
 			Integer listenPort = configServer.getDocumentationPort();
 			if (listenPort == null) {
-				listenPort = configServer.getBindingPort() + 1;
+				listenPort = 8668;
 			}
 			MRCJettyServer.runJettyServer(listenPort, "documentation");
 			ret = new MRCServerBean(configServer.getBindingAdress(),
@@ -141,7 +141,7 @@ public class MRCLauncher {
 		if (configServer.getContent()) {
 			Integer listenPort = configServer.getContentPort();
 			if (listenPort == null) {
-				listenPort = configServer.getBindingPort() + 2;
+				listenPort = 8669;
 			}
 			MRCJettyServer.runJettyServer(listenPort,
 					configServer.getContentFolder());

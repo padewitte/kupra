@@ -10,14 +10,16 @@ import org.apache.camel.builder.RouteBuilder;
 public class MRCUrlRewriteRouteBuilder extends RouteBuilder {
 
 	private MRCServerBean rootServer;
+	private int listenPort;
 	
-	public MRCUrlRewriteRouteBuilder(MRCServerBean rootServer) {
+	public MRCUrlRewriteRouteBuilder(MRCServerBean rootServer, int listenPort) {
 		this.rootServer = rootServer;
+		this.listenPort = listenPort;
 	}
 
 	@Override
 	public void configure() throws Exception {
-		from("jetty:http://"+ rootServer.getBindingAdress() + ":" + (rootServer.getListenPort()+1) + "?matchOnUriPrefix=true")
+		from("jetty:http://"+ rootServer.getBindingAdress() + ":" + (listenPort) + "?matchOnUriPrefix=true")
 		.routeId("LB")
 		.to("jetty:http://"+ rootServer.getBindingAdress() + ":" + (rootServer.getListenPort())  + "?bridgeEndpoint=true&throwExceptionOnFailure=false&urlRewrite=#urlRewriteCusto");
 	}

@@ -59,7 +59,7 @@ public class MRCLaunchConfig {
 	@Parameter(names = "-debug", description = "Debug mode", hidden = true)
 	private boolean debug = false;
 
-	@Parameter(names = { "-doc", "--documentation" }, description = "If set to true start the documentation server on listenPort +1. Not started by default.")
+	@Parameter(names = { "-doc", "--documentation" }, description = "If set to true start the documentation server on listenPort +1. Also start automaticly rewrite server on listenPort + 3. Not started by default.")
 	private Boolean documentation = false;
 
 	@Parameter(names = { "-docPort", "--documentationPort" }, description = "Listen port for documentation server. Default value : listenPort +1")
@@ -70,9 +70,6 @@ public class MRCLaunchConfig {
 
 	@Parameter(description = "mongoDbUri\n\tFormat is : [mongodb://][username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]\n")
 	private List<String> mongoDbUri = null;
-
-	@Parameter(names = { "-r", "--rewrite" }, description = "If set, start a URL rewrite mode on listen port - 1. /defaultContext requests are routed to MongoDB urls, /docs requests are routed to documentation server and others path are routed. Not started by default.")
-	private Boolean rewrite = false;
 
 	@Parameter(names = { "--multiBindingContext" }, variableArity = true , description = "Specify the context for each additional database binded at launch. bindingContext option is useless in this case.")
 	private List<String> multiBindingContext = new ArrayList<String>(); 
@@ -131,10 +128,6 @@ public class MRCLaunchConfig {
 	}
 
 	// Commons parameters
-	public Boolean getRewrite() {
-		return rewrite;
-	}
-
 	public Integer getVerbose() {
 		return verbose;
 	}
@@ -201,10 +194,6 @@ public class MRCLaunchConfig {
 
 	public void setMultiBindingContext(List<String> multiBindingContext) {
 		this.multiBindingContext = multiBindingContext;
-	}
-
-	public void setRewrite(Boolean rewrite) {
-		this.rewrite = rewrite;
 	}
 
 	public void setVerbose(Integer verbose) {

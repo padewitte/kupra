@@ -25,6 +25,7 @@ package org.mrc.restserver.launcher;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.Properties;
 import java.util.jar.Manifest;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -70,8 +71,31 @@ public class MRCMain {
 		if (jct.isHelp()) {
 			printHelp(jcommand);
 		} else if (jct.getVersion()) {
-			// TODO Read Manifest.MF to print version
-			System.out.println("0.0.3-SNAPSHOT");
+			// Properties prop = new Properties();
+			Enumeration<URL> resources = MRCMain.class.getClassLoader()
+					.getResources("META-INF/MANIFEST.MF");
+			while (resources.hasMoreElements()) {
+				try {
+					Manifest manifest = new Manifest(resources.nextElement()
+							.openStream());
+					// check that this is your manifest and do what you need or
+					// get the next one
+
+					if ("org.mrc.restserver.launcher.MRCMain".equals(manifest
+							.getMainAttributes().getValue("Main-Class"))) {
+						System.out.println("Version : "
+								+ manifest.getMainAttributes().getValue(
+										"Version"));
+						System.out.println("Build : "
+								+ manifest.getMainAttributes().getValue(
+										"SCM-Revision"));
+					}
+				} catch (IOException E) {
+					// handle
+				}
+			}
+			// System.out.println("Version : "+prop.getProperty("Version"));
+			// System.out.println("Build : "+prop.getProperty("SCM-Revision"));
 		} else if (jct.getConfig() != null) {
 			System.out
 					.println("WARNING : Launching from config file "
@@ -131,20 +155,23 @@ public class MRCMain {
 		System.out.println(ReflectionToStringBuilder.toString(jct));
 	}
 
-	private static void readVersion () throws IOException{
+	private static void readVersion() throws IOException {
 		Enumeration<URL> resources = MRCMain.class.getClassLoader()
-				  .getResources("META-INF/MANIFEST.MF");
-				while (resources.hasMoreElements()) {
-				    try {
-				      Manifest manifest = new Manifest(resources.nextElement().openStream());
-				      // check that this is your manifest and do what you need or get the next one
-				      if("org.mrc.restserver.launcher.MRCMain".equals(manifest.getAttributes("Main-Class"))){
-				    	  System.out.println(manifest.getAttributes("Main-Class"));
-				      }
-				    } catch (IOException E) {
-				      // handle
-				    }
+				.getResources("META-INF/MANIFEST.MF");
+		while (resources.hasMoreElements()) {
+			try {
+				Manifest manifest = new Manifest(resources.nextElement()
+						.openStream());
+				// check that this is your manifest and do what you need or get
+				// the next one
+				if ("org.mrc.restserver.launcher.MRCMain".equals(manifest
+						.getAttributes("Main-Class"))) {
+					System.out.println(manifest.getAttributes("Main-Class"));
 				}
+			} catch (IOException E) {
+				// handle
+			}
+		}
 	}
 
 }

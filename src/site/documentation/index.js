@@ -84,7 +84,7 @@ mrcApp.controller('MrcCtrl', function MrcCtrl($scope, $http) {
 	
 	var test_UpdateById = {
 			name : 'Perform an update replacing object with id 1',
-			request : {method : 'PUT', content : '{"_id" : "1", "name" : "Thibaut PINOT"}' , url : '/mrc/test/1'},
+			request : {method : 'PUT', content : '{"_id" : 1, "name" : "Thibaut PINOT"}' , url : '/mrc/test/1'},
 			state : 'NOTRUN',
 			run : runFunction
 	};
