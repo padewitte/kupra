@@ -124,16 +124,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jmx</artifactId>
-			<version>${camel.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spring</artifactId>
-			<version>${camel.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-restlet</artifactId>
 			<version>${camel.version}</version>
 		</dependency>
@@ -142,7 +132,6 @@
 			<artifactId>camel-jetty</artifactId>
 			<version>${camel.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-mongodb</artifactId>
@@ -176,20 +165,10 @@
 			<version>${jcommander.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>de.flapdoodle.embed</groupId>
-			<artifactId>de.flapdoodle.embed.mongo</artifactId>
-			<version>1.41</version>
-			<scope>test</scope>
-		</dependency>
-
-
-		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
 		</dependency>
-
-
 		<!-- For testing purpose -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -205,14 +184,11 @@
 			<!-- use the same version as your Camel core version -->
 		</dependency>
 	</dependencies>
-
-
 	<!-- reporting> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
 		<artifactId>maven-project-info-reports-plugin</artifactId> <version>2.7</version> 
 		<reportSets> <reportSet> <reports> <report>project-team</report> <report>issue-tracking</report> 
 		<report>license</report> <report>scm</report> </reports> </reportSet> </reportSets> 
 		</plugin> </plugins> </reporting -->
-
 	<repositories>
 		<!-- Mandatory due to restlet camel dependencies -->
 		<repository>
