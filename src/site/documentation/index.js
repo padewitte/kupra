@@ -29,7 +29,7 @@ mrcApp.controller('MrcCtrl', function MrcCtrl($scope, $http) {
 			}).error(function(data, status, headers, config) {
 				testInProgress.state = 'KO';
 				testInProgress.result =null;
-				testInProgress.result = {method : config.method, url: '', code: 'Response code : ' + status, content : data, color : 'danger', contentColor : 'info' };
+				testInProgress.result = {method : config.method, url: '', code: 'Response code : ' + status, content : data, color : 'danger', contentColor : 'danger' };
 			});
 	};
 	
