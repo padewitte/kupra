@@ -138,7 +138,7 @@ public class MRCLauncher {
 	public MRCServerBean getContentServer(MRCLaunchConfig configServer)
 			throws Exception {
 		MRCServerBean ret = null;
-		if (configServer.getContent()) {
+		if (configServer.getContent() || configServer.getDocumentation()) {
 			Integer listenPort = configServer.getContentPort();
 			if (listenPort == null) {
 				listenPort = 8669;

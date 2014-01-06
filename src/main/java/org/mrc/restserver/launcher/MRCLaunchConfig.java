@@ -44,9 +44,6 @@ public class MRCLaunchConfig {
 	@Parameter(names = { "-p", "--bindingPort" }, description = "Listen port of REST server.")
 	private Integer bindingPort = 8667;
 
-	@Parameter(names = { "-f", "--config" }, description = "Load configuration from file. With this option, MongoDbUri in command line is not needed nor used. Needed to start mrc binding on multiple databases.")
-	private String config = null;
-
 	@Parameter(names = { "-cont", "--content" }, description = "Start an additional HTTP content server to serve static files. Not started by default")
 	private Boolean content = false;
 
@@ -93,10 +90,6 @@ public class MRCLaunchConfig {
 
 	public Integer getBindingPort() {
 		return bindingPort;
-	}
-
-	public String getConfig() {
-		return config;
 	}
 
 	public Boolean getContent() {
@@ -154,10 +147,6 @@ public class MRCLaunchConfig {
 
 	public void setBindingPort(Integer bindingPort) {
 		this.bindingPort = bindingPort;
-	}
-
-	public void setConfig(String config) {
-		this.config = config;
 	}
 
 	public void setContent(Boolean content) {
