@@ -26,6 +26,7 @@ Documentation Index
   - [GET /mrc/{collection name}/{id}](https://github.com/padewitte/mrc/wiki/GET-&%2347;mrc&%2347;%7Bcollection-name%7D&%2347;%7Bid%7D)
   - [PUT /mrc/{collection name}/{id}](https://github.com/padewitte/mrc/wiki/PUT-&%2347;mrc&%2347;%7Bcollection-name%7D&%2347;%7Bid%7D)
   - [DELETE /mrc/{collection name}/{id}](https://github.com/padewitte/mrc/wiki/DELETE-&%2347;mrc&%2347;%7Bcollection-name%7D&%2347;%7Bid%7D)
+  - [Error management](https://github.com/padewitte/mrc/wiki/Error-management)
 
 - Developer corner
   - Building MRC **Documentation in progress**
