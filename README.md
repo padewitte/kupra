@@ -11,8 +11,7 @@ Tired of writing boiler plate code to interact with your MongoDB database. MRC i
 Assuming java is installed and MongoDB is running localy, download MRC, unzip it then launch `mrc.bat -doc 127.0.0.1/mrc` or `mrc.ksh -doc 127.0.0.1/mrc` depending of your plateform. Open your browser at [http://127.0.0.1:8668/](http://127.0.0.1:8668/) and interact with your database.
 
 With MRC you will be able o querie your mongodb instance like that.
-#### AngularJS
-__Search for aall documents where name equal Sylvain CHAVANEL.__
+##### Search for all documents where name equals Sylvain CHAVANEL with AngularJS
 ````
 $http({
 	method :  'GET',
@@ -23,8 +22,7 @@ $http({
 });
 ````
 
-###JQUERY
-__Save an item i a collection__
+##### Save a document in a collection with JQuery
 ````
 $.post( 'http://127.0.0.1:8668/mrc/myCollection', {"_id" : 1, "name" : "Sylvain CHAVANEL"}, function( data ) {
   console.log( data.ok );
@@ -54,7 +52,7 @@ Documentation Index
   - Building MRC **Documentation in progress**
   - Include MRC in your project **Documentation in progress**
   
-  Going further
+Going further
 ----------------------------------
 MRC is released under the MIT Licence. It is open source and free of charge.    
 Please [open an issue](https://github.com/padewitte/mrc/issue) if you find a bug or if you want to suggest an improvement.
