@@ -3,7 +3,7 @@ MRC - MongoDB REST Server
 
 Download
 ------------------------------
-Download last release as a [zip file](http://padewitte.github.io/mrc/release/mrc-0.0.3.zip) or as download it as a [tarball](http://padewitte.github.io/mrc/release/mrc-0.0.3.tar.gz).
+[Click download link on project page](padewitte.github.io/mrc)
 
 Quick start
 -----------------------------
