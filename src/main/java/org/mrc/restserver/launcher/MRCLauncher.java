@@ -60,14 +60,19 @@ public class MRCLauncher {
 			String mongoDbUri = serverConfig.getMongoDbUri().get(i);
 			if (!mongoDbUri.startsWith("mongodb://")) {
 				mongoDbUri = "mongodb://" + mongoDbUri;
-				//XXX check URI form to throw a more user friendly message
+				
 			}
+			MongoClientURI dataBaseUri = new MongoClientURI(mongoDbUri);
+			
+			
 			
 			//evaluate the database name
 			String defaultDatabase = "mrc";
-			if (mongoDbUri.lastIndexOf('/') != -1) {
-				defaultDatabase = mongoDbUri.substring(
-						mongoDbUri.lastIndexOf('/') + 1);
+			if (dataBaseUri.getDatabase() != null) {
+				defaultDatabase = dataBaseUri.getDatabase();
+			}
+			if(!new MongoClient(dataBaseUri).getDB(defaultDatabase).getStats().containsField("ok")){
+				throw new Exception("Unable to join database on uri "+mongoDbUri);
 			}
 			
 			String context = serverConfig.getBindingContext();

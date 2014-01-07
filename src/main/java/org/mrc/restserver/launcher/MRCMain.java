@@ -42,8 +42,7 @@ public class MRCMain {
 
 	private static String programName;
 
-	// TODO manage exception
-	public static void main(String[] arguments) throws Exception {
+	public static void main(String[] arguments) {
 		// Local var init
 		MRCLaunchConfig jct = new MRCLaunchConfig();
 		JCommander jcommand = new JCommander(jct);
@@ -92,7 +91,15 @@ public class MRCMain {
 				printDebug(jct);
 			}
 
-			new MRCLauncher(jct).launch();
+			try {
+				new MRCLauncher(jct).launch();
+			} catch (Exception e) {
+				System.err.println("Error during startup");
+				System.err.println(e.getMessage());
+				if(e.getCause() != null){
+					System.err.println(e.getCause().getMessage());
+				}
+			}
 		}
 	}
 
@@ -115,9 +122,6 @@ public class MRCMain {
 		System.out.println("");
 		jcommand.usage();
 		System.out.println("");
-		// TODO Add launc examples
-		// System.out.println("Examples :\n");
-		// System.out.println(programName+" -p 8090");
 	}
 
 	private static void printDebug(MRCLaunchConfig jct) {
@@ -125,30 +129,34 @@ public class MRCMain {
 		System.out.println(ReflectionToStringBuilder.toString(jct));
 	}
 
-	private static void readVersion() throws IOException {
+	private static void readVersion() {
 		// Properties prop = new Properties();
-					Enumeration<URL> resources = MRCMain.class.getClassLoader()
-							.getResources("META-INF/MANIFEST.MF");
-					while (resources.hasMoreElements()) {
-						try {
-							Manifest manifest = new Manifest(resources.nextElement()
-									.openStream());
-							// check that this is your manifest and do what you need or
-							// get the next one
+		try {
+			Enumeration<URL> resources = MRCMain.class.getClassLoader()
+					.getResources("META-INF/MANIFEST.MF");
+			while (resources.hasMoreElements()) {
+				try {
+					Manifest manifest = new Manifest(resources.nextElement()
+							.openStream());
+					// check that this is your manifest and do what you need or
+					// get the next one
 
-							if ("org.mrc.restserver.launcher.MRCMain".equals(manifest
-									.getMainAttributes().getValue("Main-Class"))) {
-								System.out.println("Version : "
-										+ manifest.getMainAttributes().getValue(
-												"Version"));
-								System.out.println("Build : "
-										+ manifest.getMainAttributes().getValue(
-												"SCM-Revision"));
-							}
-						} catch (IOException E) {
-							// handle
-						}
+					if ("org.mrc.restserver.launcher.MRCMain".equals(manifest
+							.getMainAttributes().getValue("Main-Class"))) {
+						System.out.println("Version : "
+								+ manifest.getMainAttributes().getValue(
+										"Version"));
+						System.out.println("Build : "
+								+ manifest.getMainAttributes().getValue(
+										"SCM-Revision"));
 					}
+				} catch (IOException E) {
+					// handle
+				}
+			}
+		} catch (IOException E) {
+			// handle
+		}
 	}
 
 }
