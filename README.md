@@ -15,12 +15,12 @@ With MRC you will be able o querie your mongodb instance like that.
 __Search for aall documents where name equal Sylvain CHAVANEL.__
 ````
 $http({
-				method :  'GET',
-				url : 'http://127.0.0.1:8668/mrc/myCollection',
-				headers : {'query' : '{"name" : "Sylvain CHAVANEL"}'}}
-			}).success(function(data, status, headers, config) {
-			  $scope.myList = data;
-			});
+	method :  'GET',
+	url : 'http://127.0.0.1:8668/mrc/myCollection',
+	headers : {'query' : '{"name" : "Sylvain CHAVANEL"}'}}
+}).success(function(data, status, headers, config) {
+	  $scope.myList = data;
+});
 ````
 
 ###JQUERY
