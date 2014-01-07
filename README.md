@@ -13,7 +13,7 @@ Assuming java is installed and MongoDB is running localy, download MRC, unzip it
 With MRC you will be able o querie your mongodb instance like that.
 #### AngularJS
 __Search for aall documents where name equal Sylvain CHAVANEL.__
-̀`̀`̀`̀`̀̀̀̀̀
+````
 $http({
 				method :  'GET',
 				url : 'http://127.0.0.1:8668/mrc/myCollection',
@@ -21,15 +21,15 @@ $http({
 			}).success(function(data, status, headers, config) {
 			  $scope.myList = data;
 			});
-̀`̀`̀`̀`
+````
 
 ###JQUERY
 __Save an item i a collection__
-̀`̀`̀`̀`
+````
 $.post( 'http://127.0.0.1:8668/mrc/myCollection', {"_id" : 1, "name" : "Sylvain CHAVANEL"}, function( data ) {
   console.log( data.ok );
 }, "json");
-̀`̀`̀`̀`
+````
 
 
 Documentation Index
