@@ -8,9 +8,11 @@ Download
 Quick start
 -----------------------------
 Tired of writing boiler plate code to interact with your MongoDB database. MRC is for you. After a copy / run installation you will be able to query MongoDB collections as REST entities. For example a GET to http://mymrchost/mrc/collection will list all items of your collection in JSON.   
-Assuming java is installed and MongoDB is running localy, download MRC, unzip it then launch `mrc.bat -doc 127.0.0.1/mrc` or `mrc.ksh -doc 127.0.0.1/mrc` depending of your plateform. Open your browser at [http://127.0.0.1:8668/](http://127.0.0.1:8668/) and interact with your database.
+Assuming java is installed and MongoDB is running localy, download MRC, unzip it then 
+##### launch `mrc.bat -doc 127.0.0.1/mrc` or `mrc.ksh -doc 127.0.0.1/mrc` depending of your plateform. 
 
-With MRC you will be able o querie your mongodb instance like that.
+##### Open your browser at [http://127.0.0.1:8668/](http://127.0.0.1:8668/) and enjoy !
+
 ##### Search for all documents where name equals Sylvain CHAVANEL with AngularJS
 ````
 $http({
