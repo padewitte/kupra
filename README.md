@@ -3,7 +3,7 @@ MRC - MongoDB REST Server
 
 Download
 ------------------------------
-[Click download link on project page](padewitte.github.io/mrc)
+[Click download link on project page](http://padewitte.github.io/mrc)
 
 Quick start
 -----------------------------
