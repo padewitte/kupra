@@ -26,9 +26,10 @@ $http({
 
 ##### Save a document in a collection with JQuery
 ````
-$.post( 'http://127.0.0.1:8668/mrc/myCollection', {"_id" : 1, "name" : "Sylvain CHAVANEL"}, function( data ) {
-  console.log( data.ok );
-}, "json");
+$.post( 'http://127.0.0.1:8668/mrc/myCollection', {"_id" : 1, "name" : "Sylvain CHAVANEL"}, 
+	function( data ) {
+  		console.log( data.ok );
+	}, "json");
 ````
 
 
