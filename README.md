@@ -7,7 +7,7 @@ Download
 
 Quick start
 -----------------------------
-Tired of writing boiler plate code to interact with your MongoDB database. MRC is for you. After a copy / run installation you will be able to query MongoDB collections as REST entities. For example a GET to http://mymrchost/mrc/collection will list all items of your collection in JSON.   
+MRC is a simpe REST Server for MongoDB. It could help you building quickly a simple webapp without taking care of a middleware.  
 Assuming java is installed and MongoDB is running localy, download MRC, unzip it then 
 ##### Launch `mrc.bat -doc 127.0.0.1/mrc` or `mrc.ksh -doc 127.0.0.1/mrc` depending of your plateform. 
 
