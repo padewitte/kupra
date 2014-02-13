@@ -81,7 +81,7 @@ public class MRCRouteBuilder extends RouteBuilder {
 						+ beanServer.getDefaultDatabase()
 						+ "&collection=test&operation=getColStats&dynamicity=true")
 				.process(new MRCOutProcessor())
-				.when(new RestletHttpHeaderPredicate("aggregate"))
+				.when(new RestletHttpHeaderPredicate("aggregate", true))
 				.to("mongodb:"
 						+ beanServer.getMongoDbBean()
 						+ "?database="

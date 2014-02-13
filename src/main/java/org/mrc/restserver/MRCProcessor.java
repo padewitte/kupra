@@ -43,15 +43,19 @@ public class MRCProcessor implements Processor {
 
 	public void process(Exchange exchange) throws Exception {
 		Message in = exchange.getIn();
-
+		// exchange.getFromRouteId();
 		String body = in.getHeader("query", String.class);
 		String collection = in.getHeader("collection", String.class);
 		String idHeader = in.getHeader("id", String.class);
 
 		// Copy query header in body if present
 		Form headers = in.getHeader("org.restlet.http.headers", Form.class);
-		if (headers != null && headers.getFirst("query") != null) {
-			body = headers.getFirst("query").getValue();
+		if (headers != null) {
+			if (headers.getFirst("query") != null) {
+				body = headers.getFirst("query").getValue();
+			} else if (headers.getFirst("aggregate") != null) {
+				body = headers.getFirst("aggregate").getValue();
+			}
 		}
 		// Setting collection headr
 		if (collection != null && !"".equals(collection)) {

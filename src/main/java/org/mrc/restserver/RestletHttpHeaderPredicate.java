@@ -28,24 +28,38 @@ import org.restlet.data.Form;
 
 /**
  * Predicate used to route with a Http header.
+ * 
  * @author Pierre-Alban DEWITTE
- *
+ * 
  */
 public class RestletHttpHeaderPredicate implements Predicate {
-	
+
 	private String headerToCheck;
-	
-	public RestletHttpHeaderPredicate(String headerToCheck){
+	private boolean onlyTestExist = false;
+
+	public RestletHttpHeaderPredicate(String headerToCheck) {
 		this.headerToCheck = headerToCheck;
 	}
-	
+
+	public RestletHttpHeaderPredicate(String headerToCheck,
+			boolean onlyTestExist) {
+		this.headerToCheck = headerToCheck;
+		this.onlyTestExist = onlyTestExist;
+	}
+
 	public boolean matches(Exchange exchange) {
-		Form headers = exchange.getIn().getHeader("org.restlet.http.headers",Form.class);
-		String headerValue = "false";
-		if(headers != null && headers.getFirst(headerToCheck) != null){
-			headerValue = headers.getFirst(headerToCheck).getValue();
+		Form headers = exchange.getIn().getHeader("org.restlet.http.headers",
+				Form.class);
+		boolean ret = false;
+		if (headers != null && headers.getFirst(headerToCheck) != null) {
+			if (onlyTestExist) {
+				ret = true;
+			} else {
+				ret = "true".equalsIgnoreCase(headers.getFirst(headerToCheck)
+						.getValue());
+			}
 		}
-		return "true".equalsIgnoreCase(headerValue);
-	} 
+		return ret;
+	}
 
 }
