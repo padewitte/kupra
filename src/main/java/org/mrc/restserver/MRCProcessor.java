@@ -32,6 +32,7 @@ import org.apache.camel.Processor;
 import org.restlet.data.Form;
 
 import com.mongodb.util.JSON;
+import org.restlet.util.Series;
 
 /**
  * Make the glue between Restlet and MongoDB components.
@@ -44,17 +45,17 @@ public class MRCProcessor implements Processor {
 	public void process(Exchange exchange) throws Exception {
 		Message in = exchange.getIn();
 		// exchange.getFromRouteId();
-		String body = in.getHeader("query", String.class);
-		String collection = in.getHeader("collection", String.class);
-		String idHeader = in.getHeader("id", String.class);
+		String body = in.getHeader("Query", String.class);
+		String collection = in.getHeader("Collection", String.class);
+		String idHeader = in.getHeader("Id", String.class);
 
 		// Copy query header in body if present
-		Form headers = in.getHeader("org.restlet.http.headers", Form.class);
+        Series headers = in.getHeader("org.restlet.http.headers", Series.class);
 		if (headers != null) {
-			if (headers.getFirst("query") != null) {
-				body = headers.getFirst("query").getValue();
-			} else if (headers.getFirst("aggregate") != null) {
-				body = headers.getFirst("aggregate").getValue();
+			if (headers.getFirstValue("Query") != null) {
+				body = headers.getFirstValue("Query");
+			} else if (headers.getFirstValue("Aggregate") != null) {
+				body = headers.getFirstValue("aggregate");
 			}
 		}
 		// Setting collection headr

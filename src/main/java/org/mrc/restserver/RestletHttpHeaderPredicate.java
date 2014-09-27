@@ -25,6 +25,7 @@ package org.mrc.restserver;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.restlet.data.Form;
+import org.restlet.util.Series;
 
 /**
  * Predicate used to route with a Http header.
@@ -48,15 +49,14 @@ public class RestletHttpHeaderPredicate implements Predicate {
 	}
 
 	public boolean matches(Exchange exchange) {
-		Form headers = exchange.getIn().getHeader("org.restlet.http.headers",
-				Form.class);
+        Series headers = exchange.getIn().getHeader("org.restlet.http.headers",
+                Series.class);
 		boolean ret = false;
-		if (headers != null && headers.getFirst(headerToCheck) != null) {
+		if (headers != null && headers.getFirst(headerToCheck, true) != null) {
 			if (onlyTestExist) {
 				ret = true;
 			} else {
-				ret = "true".equalsIgnoreCase(headers.getFirst(headerToCheck)
-						.getValue());
+				ret = "true".equalsIgnoreCase(headers.getFirstValue(headerToCheck, true));
 			}
 		}
 		return ret;

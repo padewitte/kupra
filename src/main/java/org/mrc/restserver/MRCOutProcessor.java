@@ -26,11 +26,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.restlet.RestletConstants;
-import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
+import org.restlet.engine.header.Header;
+import org.restlet.util.Series;
 
 /**
  * Custom processor used to propagate Custom HttpHeaders.
@@ -57,19 +58,25 @@ public class MRCOutProcessor implements Processor {
 		}
 		
 		//Copy headers
-		Form responseHeaders = (Form) response.getAttributes().get(
+        Series<Header> responseHeaders = (Series<Header>) response.getAttributes().get(
 				"org.restlet.http.headers");
 		if (responseHeaders == null) {
-			responseHeaders = new Form();
+			responseHeaders = new Series(Header.class);
 			response.getAttributes().put("org.restlet.http.headers",
 					responseHeaders);
 		}
-		responseHeaders.add("ResultTotalSize",
-				in.getHeader("CamelMongoDbResultTotalSize", String.class));
-		responseHeaders.add("ResultPageSize",
-				in.getHeader("CamelMongoDbResultPageSize", String.class));
-		responseHeaders.add("RecordsAffected",
-				in.getHeader("CamelMongoDbRecordsAffected", String.class));
+        if(in.getHeader("CamelMongoDbResultTotalSize", String.class) != null) {
+            responseHeaders.add("ResultTotalSize",
+                    in.getHeader("CamelMongoDbResultTotalSize", String.class));
+        }
+        if(in.getHeader("CamelMongoDbResultPageSize", String.class) != null) {
+            responseHeaders.add("ResultPageSize",
+                    in.getHeader("CamelMongoDbResultPageSize", String.class));
+        }
+        if(in.getHeader("CamelMongoDbRecordsAffected", String.class) != null) {
+            responseHeaders.add("RecordsAffected",
+                    in.getHeader("CamelMongoDbRecordsAffected", String.class));
+        }
 		
 
 		exchange.getOut().setBody(response);

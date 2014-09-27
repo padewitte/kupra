@@ -68,20 +68,20 @@ public class MRCRouteBuilder extends RouteBuilder {
 				.when(header("CamelHttpMethod").isEqualTo("GET"))
 				// Use count operation if count flag is set
 				.choice()
-				.when(new RestletHttpHeaderPredicate("count"))
+				.when(new RestletHttpHeaderPredicate("Count"))
 				.to("mongodb:" + beanServer.getMongoDbBean() + "?database="
 						+ beanServer.getDefaultDatabase()
 						+ "&collection=test&operation=count&dynamicity=true")
 				.process(new MRCOutProcessor())
 				// getColStatsCase
-				.when(new RestletHttpHeaderPredicate("getColStats"))
+				.when(new RestletHttpHeaderPredicate("Getcolstats"))
 				.to("mongodb:"
 						+ beanServer.getMongoDbBean()
 						+ "?database="
 						+ beanServer.getDefaultDatabase()
 						+ "&collection=test&operation=getColStats&dynamicity=true")
 				.process(new MRCOutProcessor())
-				.when(new RestletHttpHeaderPredicate("aggregate", true))
+				.when(new RestletHttpHeaderPredicate("Aggregate", true))
 				.to("mongodb:"
 						+ beanServer.getMongoDbBean()
 						+ "?database="

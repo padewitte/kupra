@@ -140,7 +140,7 @@ public class TestRestEnpoints extends CamelTestSupport {
 		String body = exchange.getOut().getBody(String.class);
 		assertNotNull("Body exist", body);
 		BasicDBObject test = (BasicDBObject) JSON.parse(body);
-		assertEquals("Assert update/insert is OK", 1.0, test.get("ok"));
+		assertEquals("Assert update/insert is OK", 1, test.get("ok"));
 	}
 
 	@Test
@@ -279,11 +279,11 @@ public class TestRestEnpoints extends CamelTestSupport {
 	 */
 	public void jTestGetColStats() throws Exception {
 		Exchange exchange = template.request("direct:GET",
-				new HeaderTestingProcessor(null, false, "getColStats"));
+				new HeaderTestingProcessor(null, false, "GetColStats"));
 		checkHttpCode200(exchange);
 		String body = exchange.getOut().getBody(String.class);
 		assertNotNull("Body exist", body);
-		BasicDBObject test = (BasicDBObject) JSON.parse(body);
+        BasicDBObject test = (BasicDBObject) JSON.parse(body);
 		assertEquals("Stats read", 1, test.get("count"));
 	}
 
