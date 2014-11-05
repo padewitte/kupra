@@ -1,4 +1,4 @@
-MRC - MongoDB REST Server
+Kupra - MongoDB REST Server
 ==============================
 
 Download
