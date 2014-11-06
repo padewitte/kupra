@@ -1,61 +1,88 @@
-apply plugin: 'java'
-apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'war'
+apply plugin: 'com.bmuschko.tomcat'
+apply plugin: 'com.bmuschko.tomcat-base'
 
-name = 'mrc'
-group = 'org.mrc'
-version = '0.1.0'
+
+group = 'org.padewitte.kupra'
+version = '0.1.0-SNAPSHOT'
 description = 'A simple REST interface for MongoDB written with Apache Camel'
 sourceCompatibility = JavaVersion.VERSION_1_7
 
 repositories {
     mavenCentral()
     maven {
-        url "http://maven.restlet.com"
+        url "https://repository.apache.org/content/repositories/snapshots/"
     }
 }
 
-
-
-jar {
-    manifest {
-        attributes("Main-Class" : "org.mrc.restserver.launcher.MRCMain","Implementation-Title": "MRC", "Implementation-Version": version)
-    }
-}
-
-buildscript {
-    repositories { jcenter() }
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.1.1'
-    }
-}
-
-shadowJar {
-    mergeServiceFiles {
-        exclude 'META-INF/*.SF'
-        exclude 'META-INF/*.DSA'
-        exclude 'META-INF/*.RSA'
-    }
-}
-
-def camelVersion = "2.14.0"
+def camelVersion = "2.14.1-SNAPSHOT"
+def springVersion = "4.1.1.RELEASE"
 def cglibVersion = "2.2.2"
 def log4jVersion = "1.2.17"
 def slf4jApiVersion = "1.6.1"
-def jcommanderVersion = "1.30"
 def commonsLangVersion = '2.6'
+def tomcatVersion = '7.0.11'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.bmuschko:gradle-tomcat-plugin:2.0"
+    }
+}
+
 
 dependencies {
+
+    //Tomcat dep
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+            "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    }
+
+    //Compile dep
     compile group: 'org.apache.camel', name: 'camel-core', version: camelVersion
-    compile group: 'org.apache.camel', name: 'camel-stream', version: camelVersion
-    compile group: 'org.apache.camel', name: 'camel-restlet', version: camelVersion
-    compile group: 'org.apache.camel', name: 'camel-jetty', version: camelVersion
-    compile group: 'org.apache.camel', name: 'camel-mongodb', version: camelVersion
+    compile group: 'org.apache.camel', name: 'camel-servlet', version: camelVersion
+    compile group: 'org.apache.camel', name: 'camel-spring', version: camelVersion
+    compile group: 'org.apache.camel', name: 'camel-metrics', version: camelVersion
+    compile group: 'org.apache.camel', name: 'camel-jackson', version: camelVersion
+
+    compile group: 'org.apache.camel', name: 'camel-mongodb', version: '2.14.0'
     compile group: 'log4j', name: 'log4j', version: log4jVersion
     compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jApiVersion
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4jApiVersion
     compile group: 'cglib', name: 'cglib', version: cglibVersion
-    compile group: 'com.beust', name: 'jcommander', version: jcommanderVersion
     compile group: 'commons-lang', name: 'commons-lang', version: commonsLangVersion
+    compile group: 'org.springframework', name: 'spring-web', version: springVersion
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.13'
+    compile group: 'ch.qos.logback', name: 'logback-core', version: '1.0.13'
+
+    //Test dep
     testCompile group: 'org.apache.camel', name: 'camel-test', version: camelVersion
     testCompile group: 'org.apache.camel', name: 'camel-http4', version: camelVersion
+}
+
+//Extra configuration needed to launch Tomcat before tests.
+
+ext {
+    tomcatStopPort = 8081
+    tomcatStopKey = 'stopKey'
+}
+
+task integrationTomcatRun(type: com.bmuschko.gradle.tomcat.tasks.TomcatRun) {
+    stopPort = tomcatStopPort
+    stopKey = tomcatStopKey
+    daemon = true
+}
+
+task integrationTomcatStop(type: com.bmuschko.gradle.tomcat.tasks.TomcatStop) {
+    stopPort = tomcatStopPort
+    stopKey = tomcatStopKey
+}
+
+test {
+    dependsOn integrationTomcatRun
+    finalizedBy integrationTomcatStop
 }

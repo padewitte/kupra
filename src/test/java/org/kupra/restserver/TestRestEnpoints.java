@@ -20,29 +20,21 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package org.mrc.restserver;
-
-import java.io.IOException;
-import java.util.ArrayList;
+package org.kupra.restserver;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
-import org.junit.Assume;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.mrc.restserver.launcher.MRCLaunchConfig;
-import org.mrc.restserver.launcher.MRCLauncher;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.util.JSON;
 
@@ -55,74 +47,34 @@ import com.mongodb.util.JSON;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestRestEnpoints extends CamelTestSupport {
 
+
+    private static final String SERVER_PREFIX = "http4://127.0.0.1:8080/kupra/rest/db";
+
 	// public static MongoClientURI MONGO_URI = new MongoClientURI(
-	// "mongodb://test:test@linus.mongohq.com:10040/mrc");
+	// "mongodb://test:test@linus.mongohq.com:10040/kupra");
 	public static MongoClientURI MONGO_URI;
-
-	private static Thread runnable;
-
-	/**
-	 * Checks whether Mongo is running using the connection URI defined in the
-	 * mongodb.test.properties file
-	 * 
-	 * @throws IOException
-	 */
-	@BeforeClass
-	public static void checkMongoRunning() throws IOException {
-		try {
-
-			if (System.getenv("MONGODB_URL") == null) {
-				MONGO_URI = new MongoClientURI(
-						"mongodb://test:test@127.0.0.1/mrc");
-			} else {
-				MONGO_URI = new MongoClientURI(System.getenv("MONGODB_URL"));
-			}
-
-			new MongoClient(MONGO_URI).getDB("mrc").getCollectionNames();
-			final MRCLaunchConfig jct = new MRCLaunchConfig();
-			jct.setBindingAdress("8667");
-			jct.setBindingContext("mrc");
-			jct.setBindingAdress("0.0.0.0");
-			ArrayList<String> listUri = new ArrayList<String>();
-			listUri.add(MONGO_URI.getURI());
-			jct.setMongoDbUri(listUri);
-			runnable = new Thread() {
-				public void run() {
-					try {
-						new MRCLauncher(jct).launch();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			};
-			runnable.start();
-		} catch (Throwable e) {
-			System.err.println("MRC test database @" + MONGO_URI.getURI()
-					+ " not reachable");
-		}
-	}
 
 	@Before
 	public void setUp() throws Exception {
-		Assume.assumeNotNull(runnable);
+		//Assume.assumeNotNull(runnable);
 		super.setUp();
 	}
 
 	@AfterClass
 	public static void stopClass() {
-		if (runnable != null) {
+		/*/if (runnable != null) {
 			runnable.interrupt();
-		}
+		}*/
 	}
 
 	@Test
 	public void aAgetDbStats() throws Exception {
 		Exchange exchange = template.request(SERVER_PREFIX + "/", null);
-		System.out.println(exchange.getOut().getBody(String.class));
+		System.out.println("###"+exchange.getOut().getBody(String.class));
 		checkHttpCode200(exchange);
 	}
 
-	private static final String SERVER_PREFIX = "http4://127.0.0.1:8667/mrc";
+
 
 	private void checkHttpCode200(Exchange exchange) {
 		int responseCode = exchange.getOut().getHeader(
@@ -272,20 +224,40 @@ public class TestRestEnpoints extends CamelTestSupport {
 		checkPutPost(exchange);
 	}
 
-	@Test
+
 	/**
 	 * We count items in collection with GET reqest and a header
 	 * @throws Exception
 	 */
-	public void jTestGetColStats() throws Exception {
+	public void getColStats(String header) throws Exception {
 		Exchange exchange = template.request("direct:GET",
-				new HeaderTestingProcessor(null, false, "GetColStats"));
+				new HeaderTestingProcessor(null, false, header));
 		checkHttpCode200(exchange);
 		String body = exchange.getOut().getBody(String.class);
 		assertNotNull("Body exist", body);
         BasicDBObject test = (BasicDBObject) JSON.parse(body);
 		assertEquals("Stats read", 1, test.get("count"));
 	}
+
+
+    @Test
+    /**
+     * We count items in collection with GET reqest and a header
+     * @throws Exception
+     */
+    public void jTestGetColStats() throws Exception {
+        getColStats("ColStats");
+    }
+
+    @Test
+    /**
+     * We count items in collection with GET reqest and a header
+     * @throws Exception
+     */
+    public void kTestGetColStats() throws Exception {
+        getColStats("colStats");
+    }
+
 
 	@Override
 	protected RouteBuilder createRouteBuilder() {
@@ -359,8 +331,7 @@ public class TestRestEnpoints extends CamelTestSupport {
 		public void process(Exchange exchange) throws Exception {
 			exchange.getIn()
 					.setHeader(
-							Exchange.CONTENT_TYPE,
-							org.apache.camel.component.http4.HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED);
+							Exchange.CONTENT_TYPE,"application/json");
 			if (customFlag != null) {
 				exchange.getIn().setHeader(customFlag, true);
 			}

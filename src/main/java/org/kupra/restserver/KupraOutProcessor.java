@@ -20,46 +20,44 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package org.mrc.restserver;
+package org.kupra.restserver;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
-import org.restlet.data.Form;
-import org.restlet.util.Series;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+
 
 /**
- * Predicate used to route with a Http header.
- * 
+ * Custom processor used to propagate Custom HttpHeaders.
  * @author Pierre-Alban DEWITTE
- * 
  */
-public class RestletHttpHeaderPredicate implements Predicate {
+public class KupraOutProcessor implements Processor {
 
-	private String headerToCheck;
-	private boolean onlyTestExist = false;
+	public void process(Exchange exchange) throws Exception {
+		Message in = exchange.getIn();
 
-	public RestletHttpHeaderPredicate(String headerToCheck) {
-		this.headerToCheck = headerToCheck;
-	}
-
-	public RestletHttpHeaderPredicate(String headerToCheck,
-			boolean onlyTestExist) {
-		this.headerToCheck = headerToCheck;
-		this.onlyTestExist = onlyTestExist;
-	}
-
-	public boolean matches(Exchange exchange) {
-        Series headers = exchange.getIn().getHeader("org.restlet.http.headers",
-                Series.class);
-		boolean ret = false;
-		if (headers != null && headers.getFirst(headerToCheck, true) != null) {
-			if (onlyTestExist) {
-				ret = true;
-			} else {
-				ret = "true".equalsIgnoreCase(headers.getFirstValue(headerToCheck, true));
-			}
+		String inBody = in.getBody(String.class);
+		
+		//Send a 204 and no no content in payload where nothing found
+		if (inBody == null || "".equals(inBody) || "[]".equals(inBody)) {
+			in.setHeader(Exchange.HTTP_RESPONSE_CODE, 204);
+			in.setBody(null);
 		}
-		return ret;
-	}
+		
+		if(in.getHeader("CamelMongoDbResultTotalSize", String.class) != null) {
+            in.setHeader("ResultTotalSize",
+                    in.getHeader("CamelMongoDbResultTotalSize", String.class));
+        }
+        if(in.getHeader("CamelMongoDbResultPageSize", String.class) != null) {
+            in.setHeader("ResultPageSize",
+                    in.getHeader("CamelMongoDbResultPageSize", String.class));
+        }
+        if(in.getHeader("CamelMongoDbRecordsAffected", String.class) != null) {
+            in.setHeader("RecordsAffected",
+                    in.getHeader("CamelMongoDbRecordsAffected", String.class));
+        }
+		
 
+
+	}
 }

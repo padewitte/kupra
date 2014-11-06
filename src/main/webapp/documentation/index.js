@@ -1,5 +1,5 @@
-var mrcApp = angular.module('MrcApp', []);
-mrcApp.controller('MrcCtrl', function MrcCtrl($scope, $http) {
+var kupraApp = angular.module('kupraApp', []);
+kupraApp.controller('kupraCtrl', function kupraCtrl($scope, $http) {
 	//Run a test
 	var runFunction = function() {
 		var testInProgress = this;
@@ -35,63 +35,63 @@ mrcApp.controller('MrcCtrl', function MrcCtrl($scope, $http) {
 	
 	var test_deleteOne = {
 			name : 'Delete item with id 1',
-			request : {method : 'DELETE', url : '/mrc/test/1'},
+			request : {method : 'DELETE', url : '/kupra/rest/test/col/1'},
 			state : 'NOTRUN',
 			run : runFunction
 	};
 	
 	var test_postFirstData = {
 			name : 'Insert a first document in MongoDB database',
-			request : {method : 'POST', url : '/mrc/test',content : "{'_id' : 1, 'name' : 'Sylvain CHAVANEL'}"},
+			request : {method : 'POST', url : '/kupra/rest/test/col',content : "{'_id' : 1, 'name' : 'Sylvain CHAVANEL'}"},
 			state : 'NOTRUN',
 			run : runFunction
 		};
 	
 	var test_postSecondData = {
 		name : 'Insert a second document in MongoDB database',
-		request : {method : 'POST', url : '/mrc/test',content : "{'_id' : 2, 'name' : 'Thomas VOECKLER'}"},
+		request : {method : 'POST', url : '/kupra/rest/test/col',content : "{'_id' : 2, 'name' : 'Thomas VOECKLER'}"},
 		state : 'NOTRUN',
 		run : runFunction
 	};
 	
 	var test_showTest = {
 			name : 'Show the content of test collection',
-			request : {method : 'GET', url : '/mrc/test'},
+			request : {method : 'GET', url : '/kupra/rest/test/col'},
 			state : 'NOTRUN',
 			run : runFunction
 	};
 	
 	var test_showTest_byId = {
 			name : 'Show the document with id 2 content of test collection',
-			request : {method : 'GET', url : '/mrc/test/2'},
+			request : {method : 'GET', url : '/kupra/rest/test/col/2'},
 			state : 'NOTRUN',
 			run : runFunction
 	};
 	
 	var test_count = {
 			name : 'Count items in test collection',
-			request : {method : 'GET', url : '/mrc/test', headers : {'count' : true}},
+			request : {method : 'GET', url : '/kupra/rest/test/col', headers : {'count' : true}},
 			state : 'NOTRUN',
 			run : runFunction
 	};
 	
 	var test_Query = {
 			name : 'Filter items with name equals to Sylvain CHAVANEL',
-			request : {method : 'GET', url : '/mrc/test', headers : {'query' : '{"name" : "Sylvain CHAVANEL"}'}},
+			request : {method : 'GET', url : '/kupra/rest/test/col', headers : {'query' : '{"name" : "Sylvain CHAVANEL"}'}},
 			state : 'NOTRUN',
 			run : runFunction
 	}
 	
 	var test_UpdateById = {
 			name : 'Perform an update replacing object with id 1',
-			request : {method : 'PUT', content : '{"_id" : 1, "name" : "Thibaut PINOT"}' , url : '/mrc/test/1'},
+			request : {method : 'PUT', content : '{"_id" : 1, "name" : "Thibaut PINOT"}' , url : '/kupra/rest/test/col/1'},
 			state : 'NOTRUN',
 			run : runFunction
 	};
 	
 	var test_DeleteAllItems = {
 			name : 'Delete all items in test collection',
-			request : {method : 'DELETE', url : '/mrc/test',headers : {'query' : '{"name" : {$exists : true }}'}},
+			request : {method : 'DELETE', url : '/kupra/rest/test/col',headers : {'query' : '{"name" : {$exists : true }}'}},
 			state : 'NOTRUN',
 			run : runFunction
 			

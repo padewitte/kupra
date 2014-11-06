@@ -20,19 +20,14 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package org.mrc.restserver;
-
-import java.net.URLDecoder;
-import java.util.Iterator;
-import java.util.Map.Entry;
+package org.kupra.restserver;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.restlet.data.Form;
-
 import com.mongodb.util.JSON;
-import org.restlet.util.Series;
+import org.apache.commons.lang.StringUtils;
+
 
 /**
  * Make the glue between Restlet and MongoDB components.
@@ -40,54 +35,44 @@ import org.restlet.util.Series;
  * @author pierrealban
  * 
  */
-public class MRCProcessor implements Processor {
+public class KupraProcessor implements Processor {
 
 	public void process(Exchange exchange) throws Exception {
 		Message in = exchange.getIn();
 		// exchange.getFromRouteId();
-		String body = in.getHeader("Query", String.class);
-		String collection = in.getHeader("Collection", String.class);
+		String body = null;
+
+        String queryHeader = in.getHeader("Query", String.class);
 		String idHeader = in.getHeader("Id", String.class);
-
-		// Copy query header in body if present
-        Series headers = in.getHeader("org.restlet.http.headers", Series.class);
-		if (headers != null) {
-			if (headers.getFirstValue("Query") != null) {
-				body = headers.getFirstValue("Query");
-			} else if (headers.getFirstValue("Aggregate") != null) {
-				body = headers.getFirstValue("aggregate");
-			}
-		}
-		// Setting collection headr
-		if (collection != null && !"".equals(collection)) {
-			exchange.getIn().setHeader("CamelMongoDbCollection", collection);
-		}
-
-		// Copy all Http Incoming Headers into Camel headers adding CamelMongoDb
-		// into it.
-		Iterator<Entry<String, String>> entriesSet = headers.getValuesMap()
-				.entrySet().iterator();
-		while (entriesSet.hasNext()) {
-			Entry<String, String> entrie = entriesSet.next();
-			exchange.getIn().setHeader("CamelMongoDb" + entrie.getKey(),
-					entrie.getValue());
-		}
+        String aggregateHeader = in.getHeader("Aggregate", String.class);
+        String fieldFilter = in.getHeader("FieldsFilter", String.class);
+        if(fieldFilter != null) {
+            in.setHeader("CamelMongoDbFieldsFilter",fieldFilter);
+        }
 
 		// Case id header present
 		if (idHeader != null && !"".equals(idHeader)) {
+
+            try {
+                idHeader = String.valueOf(Double.parseDouble(idHeader));
+            } catch (NumberFormatException ex){
+                if(!idHeader.startsWith("'") && idHeader.endsWith("'")) {
+                    idHeader = "'" + idHeader + "'";
+                }
+            }
 			// the getById mongoDb component need id in body. In case of byId
 			// operation make a copy.
-			if (exchange.getFromRouteId().startsWith("byId")
-					&& "GET".equals(in.getHeader("CamelHttpMethod"))) {
+            String methodHeader = Exchange.HTTP_METHOD;
+			if ("GET".equals(in.getHeader(methodHeader))) {
 				body = idHeader;
-			} else if ("DELETE".equals(in.getHeader("CamelHttpMethod"))) {
-				idHeader = URLDecoder.decode(idHeader, "UTF-8");
-				if (!idHeader.contains("$oid")) {
-					idHeader = "'" + idHeader + "'";
-				}
+			} else if ("DELETE".equals(in.getHeader(methodHeader))) {
 				body = " { '_id' : " + idHeader + " }";
 			}
-		}
+		} else if (!StringUtils.isEmpty(queryHeader)){
+            body = queryHeader;
+        } else if (!StringUtils.isEmpty(aggregateHeader)){
+            body = aggregateHeader;
+        }
 
 		// setting the body if set by headers
 		if (body != null && !"".equals(body)) {

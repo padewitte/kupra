@@ -1,49 +1,45 @@
-package org.mrc.restserver;
+package org.kupra.restserver;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mongodb.CamelMongoDbException;
-import org.apache.camel.component.restlet.RestletConstants;
-import org.restlet.Response;
-import org.restlet.data.MediaType;
-import org.restlet.data.Status;
+
 
 import com.mongodb.CommandFailureException;
 import com.mongodb.MongoException;
 import com.mongodb.WriteConcernException;
 import com.mongodb.util.JSON;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class MRCErrorProcessor implements Processor {
+public class KupraErrorProcessor implements Processor {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
 	public void process(Exchange exchange) throws Exception {
-		// the caused by exception is stored in a property on
-		// the exchange
-		// use Restlet API to create the response
-		Response response = exchange.getIn().getHeader(
-				RestletConstants.RESTLET_RESPONSE, Response.class);
-		response.setStatus(Status.SERVER_ERROR_INTERNAL);
+
+        Message in = exchange.getIn();
+        in.setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
 
 		Throwable caused = exchange.getProperty(Exchange.EXCEPTION_CAUGHT,
 				Throwable.class);
 		if (caused.getCause() instanceof WriteConcernException) {
-			response.setEntity(JSON.serialize(((WriteConcernException) caused
-					.getCause()).getCommandResult()),
-					MediaType.APPLICATION_JSON);
+			in.setBody(JSON.serialize(((WriteConcernException) caused.getCause()).getCommandResult()));
 		} else if (caused.getCause() instanceof CommandFailureException) {
-			response.setEntity(JSON.serialize(((CommandFailureException) caused
-					.getCause()).getCommandResult()),
-					MediaType.APPLICATION_JSON);
+			in.setBody(JSON.serialize(((CommandFailureException) caused
+					.getCause()).getCommandResult()));
 
 		} else if (caused.getCause() instanceof MongoException) {
 			MongoException rootCause = (MongoException) caused.getCause();
-			response.setEntity(
+			in.setBody(
 					"{\"code\" : \"" + rootCause.getCode() + "\" ,\"err\" : \""
 							+ rootCause.getMessage().replace("\"", "\'")
-							+ "\" }", MediaType.APPLICATION_JSON);
+							+ "\" }");
 		} else if (caused.getCause() instanceof CamelMongoDbException) {
-			response.setEntity("{ \"err\" : \""
+			in.setBody("{ \"err\" : \""
 					+ caused.getCause().getMessage().replace("\"", "\'")
-					+ "\" }", MediaType.APPLICATION_JSON);
+					+ "\" }");
 		} else {
 			String ret = "\"err\" : \"" + caused.getClass().getName() + " => "
 					+ caused.getMessage().replace("\"", "\'") + "\"";
@@ -53,9 +49,9 @@ public class MRCErrorProcessor implements Processor {
 						+ "\"";
 			}
 
-			response.setEntity("{" + ret.replace("\n", "") + "}", MediaType.APPLICATION_JSON);
-			caused.printStackTrace();
+			in.setBody("{" + ret.replace("\n", "") + "}");
+            log.info("User error",caused);
 		}
-		exchange.getOut().setBody(response);
+		
 	}
 }
