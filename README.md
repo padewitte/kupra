@@ -15,17 +15,23 @@ With Kupra you can perform basic CRUD operation but also bulk insert or update, 
 
 ##### Search for all documents where name equals Sylvain CHAVANEL with AngularJS
 ````
-$http({
-	method :  'GET',
-	url : 'http://127.0.0.1:8668/kupra/rest/myDB/myCollection?query={"name" : "Sylvain CHAVANEL"}'}
-}).success(function(data, status, headers, config) {
+$http(
+	{
+		method :  'GET',
+		url :
+		'http://127.0.0.1:8668/kupra/rest/myDB/myCollection?
+		query={"name" : "Sylvain CHAVANEL"}'}
+	}
+).success(function(data, status, headers, config) {
 	  $scope.myList = data;
 });
 ````
 
 ##### Save a document in a collection with JQuery
 ````
-$.post( 'http://127.0.0.1:8668/kupra/rest/myDB/myCollection', {"_id" : 1, "name" : "Sylvain CHAVANEL"},
+$.post(
+	 	'http://127.0.0.1:8668/kupra/rest/myDB/myCollection',
+		{"_id" : 1, "name" : "Sylvain CHAVANEL"},
 	function( data ) {
   		console.log( data.ok );
 	}, "json");
