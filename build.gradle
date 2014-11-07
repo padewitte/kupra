@@ -1,7 +1,8 @@
 apply plugin: 'war'
 apply plugin: 'com.bmuschko.tomcat'
 apply plugin: 'com.bmuschko.tomcat-base'
-
+apply plugin: 'idea'
+apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 
 group = 'org.padewitte.kupra'
 version = '0.1.0-SNAPSHOT'
@@ -28,9 +29,11 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "com.bmuschko:gradle-tomcat-plugin:2.0"
+        classpath "com.bmuschko:gradle-tomcat-plugin:2.0";
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.0';
     }
 }
+
 
 
 dependencies {
@@ -64,8 +67,12 @@ dependencies {
     testCompile group: 'org.apache.camel', name: 'camel-http4', version: camelVersion
 }
 
-//Extra configuration needed to launch Tomcat before tests.
+//Configuration for doc generation
+asciidoctor {
+    outputDir = new File("src/main/webapp/documentation")
+}
 
+//Extra configuration needed to launch Tomcat before tests.
 ext {
     tomcatStopPort = 8081
     tomcatStopKey = 'stopKey'

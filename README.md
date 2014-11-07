@@ -3,22 +3,21 @@ Kupra - MongoDB REST Server
 
 Download
 ------------------------------
-[Click download link on project page](http://padewitte.github.io/mrc)
+[Download the lastest release ](https://github.com/padewitte/kupra/releases)
 
 Quick start
 -----------------------------
-MRC is a simple REST Server for MongoDB. It could help you building quickly a simple webapp without taking care of a middleware.  
-Assuming java is installed and MongoDB is running localy, download MRC, unzip it then 
-##### Launch `mrc.bat -doc 127.0.0.1/mrc` or `mrc.ksh -doc 127.0.0.1/mrc` depending of your plateform. 
+Kupra is a simple REST Server for MongoDB. It could help you building quickly a simple webapp without taking care of a the server side. You just have to set the KUPRA_MONGOD_URI on your system then deploy Kupra war in your tomcat or Jetty.  
 
-##### Open your browser at [http://127.0.0.1:8668/](http://127.0.0.1:8668/) and enjoy !
+With Kupra you can perform basic CRUD operation but also bulk insert or update, aggregation, count and sort.
+
+##### Open your browser at [http://127.0.0.1:8080/kupra/documentation](http://127.0.0.1:8080/kupra/documentation) and enjoy !
 
 ##### Search for all documents where name equals Sylvain CHAVANEL with AngularJS
 ````
 $http({
 	method :  'GET',
-	url : 'http://127.0.0.1:8668/mrc/myCollection',
-	headers : {'query' : '{"name" : "Sylvain CHAVANEL"}'}}
+	url : 'http://127.0.0.1:8668/kupra/rest/myDB/myCollection?query={"name" : "Sylvain CHAVANEL"}'}
 }).success(function(data, status, headers, config) {
 	  $scope.myList = data;
 });
@@ -26,7 +25,7 @@ $http({
 
 ##### Save a document in a collection with JQuery
 ````
-$.post( 'http://127.0.0.1:8668/mrc/myCollection', {"_id" : 1, "name" : "Sylvain CHAVANEL"}, 
+$.post( 'http://127.0.0.1:8668/kupra/rest/myDB/myCollection', {"_id" : 1, "name" : "Sylvain CHAVANEL"},
 	function( data ) {
   		console.log( data.ok );
 	}, "json");
@@ -35,29 +34,21 @@ $.post( 'http://127.0.0.1:8668/mrc/myCollection', {"_id" : 1, "name" : "Sylvain 
 
 Documentation Index
 -----------------------------------
-- Introduction
-  - [History of MRC](https://github.com/padewitte/mrc/wiki/Why-MRC-was-create-&%2363;)
-  - [Installation](https://github.com/padewitte/mrc/wiki/Installation)
-  - [Getting started](https://github.com/padewitte/mrc/wiki/Getting-Started)
-  - [Command line documentation](https://github.com/padewitte/mrc/wiki/Command-Line-Options)
+- [Getting started](https://github.com/padewitte/kupra/wiki/Getting-Started)
+- [GET  - List, search, aggregate, count, colStats](https://github.com/padewitte/kupra/wiki/%5BAPI%5D-GET)
+- [GET by id - Consult one document ](https://github.com/padewitte/kupra/wiki/%5BAPI%5D-GET_BY_ID)
+- [POST - Add document](https://github.com/padewitte/kupra/wiki/%5BAPI%5D-POST)
+- [PUT - Partial or multi-document update](https://github.com/padewitte/kupra/wiki/%5BAPI%5D-PUT)
+- [PUT by id - Document replacement](https://github.com/padewitte/kupra/wiki/%5BAPI%5D-PUT_BY_ID)
+- [DELETE - Delete with a filter](https://github.com/padewitte/kupra/wiki/%5BAPI%5D-DELETE)
+- [DELETE by id - Delete one document](https://github.com/padewitte/kupra/wiki/%5BAPI%5D-DELETE_BY_ID)
 
-- Manipulate your data
-  - [GET /mrc/{collection name}](https://github.com/padewitte/mrc/wiki/GET-&%2347;mrc&%2347;%7Bcollection-name%7D)
-  - [POST /mrc/{collection name}](https://github.com/padewitte/mrc/wiki/POST-&%2347;mrc&%2347;%7Bcollection-name%7D)
-  - [PUT /mrc/{collection name}](https://github.com/padewitte/mrc/wiki/PUT-&%2347;mrc&%2347;%7Bcollection-name%7D)
-  - [DELETE /mrc/{collection name}](https://github.com/padewitte/mrc/wiki/DELETE-&%2347;mrc&%2347;%7Bcollection-name%7D) 
-  - [GET /mrc/{collection name}/{id}](https://github.com/padewitte/mrc/wiki/GET-&%2347;mrc&%2347;%7Bcollection-name%7D&%2347;%7Bid%7D)
-  - [PUT /mrc/{collection name}/{id}](https://github.com/padewitte/mrc/wiki/PUT-&%2347;mrc&%2347;%7Bcollection-name%7D&%2347;%7Bid%7D)
-  - [DELETE /mrc/{collection name}/{id}](https://github.com/padewitte/mrc/wiki/DELETE-&%2347;mrc&%2347;%7Bcollection-name%7D&%2347;%7Bid%7D)
-  - [Error management](https://github.com/padewitte/mrc/wiki/Error-management)
-
-- Developer corner
-  - Building MRC **Documentation in progress**
-  - Include MRC in your project **Documentation in progress**
-  
-Going further
+Developer corner
 ----------------------------------
-MRC is released under the MIT Licence. It is open source and free of charge.    
-Please [open an issue](https://github.com/padewitte/mrc/issue) if you find a bug or if you want to suggest an improvement.
-Follow [@MongoRESTCamel](https://twitter.com/MongoRESTCamel)to be notified of project updates</p>
-  
+To build kupra, clone this repo then `gradle war`
+
+Please [open an issue](https://github.com/padewitte/kupra/issue) if you find a bug or if you want to suggest an improvement. Contribution are also really welcome.
+
+Licence
+----------------------------------
+Kupra is released under the MIT Licence. It is open source and free of charge.
