@@ -42,6 +42,10 @@ Documentation Index
 -----------------------------------
 - [Getting started](https://github.com/padewitte/kupra/wiki/Getting-Started)
 - [GET  - List, search, aggregate, count, colStats](https://github.com/padewitte/kupra/wiki/%5BAPI%5D-GET)
+	- [List the firts 100 items](1) : GET kupra/rest/db/col/?limit=100
+	- List matching criteria : GET kupra/rest/db/col/?query={name : 'Jack'}
+	- Match and count : GET kupra/rest/db/col/?query={name : 'Jack'}&count
+	- Aggregation : GET kupra/rest/db/col/aggregate={$group : {_id:$name, nb : {$sum :1}}}
 - [GET by id - Consult one document ](https://github.com/padewitte/kupra/wiki/%5BAPI%5D-GET_BY_ID)
 - [POST - Add document](https://github.com/padewitte/kupra/wiki/%5BAPI%5D-POST)
 - [PUT - Partial or multi-document update](https://github.com/padewitte/kupra/wiki/%5BAPI%5D-PUT)
