@@ -1,0 +1,15 @@
+<div class="row marketing">
+    <h3>
+        <ui-select ng-model="selectedDb.selected" ng-disabled="disabled" style="width: 300px;" theme="bootstrap">
+        <ui-select-match placeholder="Select or search a db in the list...">{{$select.selected.name}}</ui-select-match>
+        <ui-select-choices repeat="db in dbs | filter: $select.search">
+            <span ng-bind-html="db.name | highlight: $select.search"></span>
+            <small ng-bind-html="db.size | highlight: $select.search"></small>
+        </ui-select-choices>
+    </ui-select>
+    </h3>
+</div>
+
+<div class="row marketing">
+    <kupra-db db="selectedDb.selected.name"></kupra-db>
+</div>
