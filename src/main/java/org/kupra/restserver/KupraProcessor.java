@@ -45,6 +45,7 @@ public class KupraProcessor implements Processor {
         String queryHeader = in.getHeader("Query", String.class);
 		String idHeader = in.getHeader("Id", String.class);
         String aggregateHeader = in.getHeader("Aggregate", String.class);
+        String cmdHeader = in.getHeader("Cmd", String.class);
         String fieldFilter = in.getHeader("FieldsFilter", String.class);
         if(fieldFilter != null) {
             in.setHeader("CamelMongoDbFieldsFilter",fieldFilter);
@@ -72,6 +73,8 @@ public class KupraProcessor implements Processor {
             body = queryHeader;
         } else if (!StringUtils.isEmpty(aggregateHeader)){
             body = aggregateHeader;
+        }   else if (!StringUtils.isEmpty(cmdHeader)){
+            body = cmdHeader;
         }
 
 		// setting the body if set by headers

@@ -42,7 +42,10 @@ public class KupraRestRouteBuilder extends RouteBuilder {
 
         rest("/{CamelMongoDbDatabase}").description("Database operations").consumes("exchange").produces("application/json")
                 .get("/").description("Get database stats")
-                    .route().process(new KupraProcessor()).to(String.format(mongoDBRoute, MongoDbOperation.getDbStats)).process(new KupraOutProcessor()).endRest()
+                    .route().process(new KupraProcessor()).choice()
+                        .when(header("Cmd").isNotNull()).to(String.format(mongoDBRoute, MongoDbOperation.command))
+                        .otherwise().to(String.format(mongoDBRoute, MongoDbOperation.getDbStats))
+                    .endChoice().process(new KupraOutProcessor()).endRest()
                 .get("/{CamelMongoDbCollection}").description("Endpoint to perfom a find, aggregate, count or getColStat on a collection")
                     .route().process(new KupraProcessor()).choice()
                         .when(header("Count").isNotNull()).to(String.format(mongoDBRoute, MongoDbOperation.count))

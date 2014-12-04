@@ -10,13 +10,14 @@ description = 'A simple REST interface for MongoDB written with Apache Camel'
 sourceCompatibility = JavaVersion.VERSION_1_7
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven {
         url "https://repository.apache.org/content/repositories/snapshots/"
     }
 }
 
-def camelVersion = "2.14.1-SNAPSHOT"
+def camelVersion = "2.15-SNAPSHOT"
 def springVersion = "4.1.1.RELEASE"
 def cglibVersion = "2.2.2"
 def log4jVersion = "1.2.17"
@@ -52,7 +53,7 @@ dependencies {
     compile group: 'org.apache.camel', name: 'camel-metrics', version: camelVersion
     compile group: 'org.apache.camel', name: 'camel-jackson', version: camelVersion
 
-    compile group: 'org.apache.camel', name: 'camel-mongodb', version: '2.14.0'
+    compile group: 'org.apache.camel', name: 'camel-mongodb', version: camelVersion
     compile group: 'log4j', name: 'log4j', version: log4jVersion
     compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jApiVersion
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4jApiVersion
